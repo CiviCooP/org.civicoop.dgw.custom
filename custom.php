@@ -243,6 +243,42 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
             }
         }
     }
+    /*
+     * BOS1311302 - validation of phone numbers
+     */
+    if ( $formName == "CRM_Contact_Form_Contact" || $formName == "CRM_Contact_Form_Inline_Phone" ) {
+        $valid_first_digits = array("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "+");
+        $valid_digits = array("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-");
+        
+        foreach ( $fields['phone'] as $phone_key => $phone ) {
+            /*
+             * phonenumber can start with a number or +
+             */
+            if (isset($phone['phone'])) {
+                $first_digit_phone = substr($phone['phone'], 0, 1);
+                if (!in_array($first_digit_phone, $valid_first_digits)) {
+                    $errors['phone['.$phone_key . '][phone]'] = 'Eerste teken van telefoonnummer moet een cijfer of een + zijn.';
+                }
+                /*
+                 * phonenumber can only contain one '-'
+                 */
+                if (substr_count($phone['phone'],"-") > 1) {
+                    $errors['phone['.$phone_key . '][phone]'] = 'Telefoonnummer mag maximaal 1 streepje (-) bevatten.';                    
+                }
+                /*
+                 * phone (minus first position) can only contain numbers or "-" (checked for
+                 * only one with previous validation).
+                 */
+                $test_length = strlen($phone['phone']);
+                for ($i = 1; $i < $test_length; $i++) {
+                    if (!in_array(substr($phone['phone'], $i, 1), $valid_digits)) {
+                        $errors['phone['.$phone_key . '][phone]'] = 'Telefoonnumer mag alleen cijfers bevatten (behalve + als begin en maximaal 1 streepje)';
+                    }
+                }
+            }            
+        }
+    }
+
     return;
 }
 /**
