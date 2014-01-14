@@ -53,6 +53,23 @@
  |                                                                    |
  +--------------------------------------------------------------------+
 *}
+{* Customization DGW1 VB script to call ActiveX function eWorX *}
+{* DGW20 Aanpassing voor bCC project, Active X object op D: *}
+<script type="text/vbscript">
+Function OpenHuurder(strHuurderNummer,blnNCCW)
+Dim shell
+    Set shell = CreateObject("WScript.Shell")
+    If blnNCCW Then
+'    	shell.Run Chr(34) & "D:\Program Files\Square DMS\eWorX\Connectors\DDE\dmsConnectorDDE.exe" & Chr(34) & " [SQUARE]#2#eWorX3.2.2:pers_nr:" & strHuurderNummer & ":EW_DocumentClass:Complex initatief", 1, false   !Voorbeeld met meerdere kenmerken.
+    	shell.Run Chr(34) & "D:\Program Files\Square DMS\eWorX\Connectors\DDE\dmsConnectorDDE.exe" & Chr(34) & " [SQUARE]#2#eWorX3.2.2:pers_nr:" & strHuurderNummer, 1, false
+    Else
+'    	shell.Run Chr(34) & "D:\Program Files\Square DMS\eWorX\Connectors\DDE\dmsConnectorDDE.exe" & Chr(34) & " pers_nr:" & strHuurderNummer & " EW_DocumentClass:Complex_initatief", 1, false		!Voorbeeld met meerdere kenmerken.
+    	shell.Run Chr(34) & "D:\Program Files\Square DMS\eWorX\Connectors\DDE\dmsConnectorDDE.exe" & Chr(34) & " pers_nr:" & strHuurderNummer, 1, false
+    End if
+    Set shell = Nothing
+End Function
+</script>
+{* end VB script DGW1 *}
 
 {* Customization DGW3 disable edit mode for household if *}
 {* huurovereenkomst or koopovereenkomst is present *}
@@ -72,23 +89,6 @@
 {/if}
 {* end DGW3 *}
 
-{* Customization DGW1 VB script to call ActiveX function eWorX *}
-{* DGW20 Aanpassing voor bCC project, Active X object op D: *}
-<script type="text/vbscript">
-Function OpenHuurder(strHuurderNummer,blnNCCW)
-Dim shell
-    Set shell = CreateObject("WScript.Shell")
-    If blnNCCW Then
-'    	shell.Run Chr(34) & "C:\Program Files\Square DMS\eWorX\Connectors\DDE\dmsConnectorDDE.exe" & Chr(34) & " [SQUARE]#2#eWorX3.2.2:pers_nr:" & strHuurderNummer & ":EW_DocumentClass:Complex initatief", 1, false   !Voorbeeld met meerdere kenmerken.
-    	shell.Run Chr(34) & "C:\Program Files\Square DMS\eWorX\Connectors\DDE\dmsConnectorDDE.exe" & Chr(34) & " [SQUARE]#2#eWorX3.2.2:pers_nr:" & strHuurderNummer, 1, false
-    Else
-'    	shell.Run Chr(34) & "C:\Program Files\Square DMS\eWorX\Connectors\DDE\dmsConnectorDDE.exe" & Chr(34) & " pers_nr:" & strHuurderNummer & " EW_DocumentClass:Complex_initatief", 1, false		!Voorbeeld met meerdere kenmerken.
-    	shell.Run Chr(34) & "C:\Program Files\Square DMS\eWorX\Connectors\DDE\dmsConnectorDDE.exe" & Chr(34) & " pers_nr:" & strHuurderNummer, 1, false
-    End if
-    Set shell = Nothing
-End Function
-</script>
-{* end VB script DGW1 *}
 
 {* DGW1 check if Persoonsnummer First is present so buttons eWorX and First can be shown *}
 {assign var="buttonsFirst" value=0}
@@ -148,7 +148,7 @@ End Function
           {/if}
 		  
 		  {* MUT001 opzeggen huurovereenkomst *}
-		  {include file="CRM/Contact/Page/View/hov_opzeggen.tpl"}
+		  {*include file="CRM/Contact/Page/View/hov_opzeggen.tpl"*}
 		  {* end MUT001 *}
 
           {* Check for permissions to provide Restore and Delete Permanently buttons for contacts that are in the trash. *}
