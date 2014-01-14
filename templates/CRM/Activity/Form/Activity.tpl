@@ -313,11 +313,11 @@
       <td class="view-value">
       {* If using plain textarea, assign class=huge to make input large enough. *}
        	{* DGW19 / incident 14 010 13 003 laat details alleen zien als showStuff = 1 *}
-            {if $showStuff eq 1}
+            {*{if $showStuff eq 1}*}
                 {if $defaultWysiwygEditor eq 0}{$form.details.html|crmStripAlternatives|crmReplace:class:huge}{else}{$form.details.html|crmStripAlternatives}{/if}
-            {else}
-                {$txtShow}
-            {/if}
+            {*{else}*}
+                {*{$txtShow}*}
+            {*{/if}*}
         {* end DGW19 tweede deel *}
       </td>
     {/if}
