@@ -1,5 +1,5 @@
 <?php
-set_time_limit(0);
+set_time_limit(1200);
 require_once 'CRM/Utils/DgwUtils.php';
 require_once 'CRM/Core/Page.php';
 
@@ -31,14 +31,14 @@ class CRM_Custom_Page_ProcessKov extends CRM_Core_Page {
              */
             $this->_kovHeader = CRM_Utils_DgwUtils::getDgwConfigValue('kov header');
             $this->_kovTable = CRM_Utils_DgwUtils::getDgwConfigValue('kov tabel');
-            self::loadHeaderData();
+            $this->loadHeaderData();
             /*
              * read and process all headers
              */
             $headerDAO = CRM_Core_DAO::executeQuery("SELECT * FROM ".$this->_kovHeader." ORDER BY kov_nr");
             while ($headerDAO->fetch()) {
                 if (!empty($headerDAO->kov_nr) && $headerDAO->kov_nr != 0) {
-                    self::processHeader($headerDAO);
+                    $this->processHeader($headerDAO);
                 }
             }
             /*
@@ -129,8 +129,6 @@ class CRM_Custom_Page_ProcessKov extends CRM_Core_Page {
             }
             if ($importKov) {
                 $insImport .= implode(", ", $insFields);
-            echo "<p>insert is $insImport</p>";
-
                 CRM_Core_DAO::executeQuery($insImport);
             }
         }
@@ -173,9 +171,6 @@ class CRM_Custom_Page_ProcessKov extends CRM_Core_Page {
      */
     private function processHeader($kovData) {
         $kov_nr = (int) $kovData->kov_nr;
-
-        echo "<p>Nummer koopovereenkomst is $kov_nr</p>";
-
         if (is_numeric( $kovData->prijs)) {
             $prijs = (int) $kovData->prijs;
         } else {
