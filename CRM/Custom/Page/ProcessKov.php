@@ -41,6 +41,7 @@ class CRM_Custom_Page_ProcessKov extends CRM_Core_Page {
                     $this->processHeader($headerDAO);
                 }
             }
+            unset($headerDAO);
             /*
              * remove source file
              */
@@ -132,12 +133,15 @@ class CRM_Custom_Page_ProcessKov extends CRM_Core_Page {
                 CRM_Core_DAO::executeQuery($insImport);
             }
         }
+        fclose($sourceData);
+        unset($sourceData);
         CRM_Core_DAO::executeQuery("TRUNCATE TABLE ".$this->_kovHeader);
         $kovHdrInsert =
 "INSERT INTO ".$this->_kovHeader." (SELECT DISTINCT(kov_nr), vge_nr, corr_naam, ov_datum, vge_adres, ";
         $kovHdrInsert .=
 "type, prijs, notaris, tax_waarde, taxateur, tax_datum, bouwkundige, bouw_datum, definitief FROM ".$this->_kovTable.")";
         CRM_Core_DAO::executeQuery($kovHdrInsert);
+        
     }
     /*
      * function to set the type of KOV
