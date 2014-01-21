@@ -52,11 +52,11 @@
 {* incident 14 01 13 003 zelfde functionaliteit nodig voor groep Dir/Best (28 in test, 24 in prod environment) *}
 {*                       met variabele userDirBest *}
 {assign var='showStuff' value=1}
-{if $form.activity_type_id.value.0 == 109 or $form.activity_type_id.value.0 == 118}
-    {if $form.activity_type_id.value.0 == 109}
+{if $form.activity_type_id.value.0 eq 109 or $form.activity_type_id.value.0 == 118}
+    {if $form.activity_type_id.value.0 eq 109}
         {assign var='txtShow' value="Gevoelige informatie, neem contact op met Consulent Wijk en Ontwikkeling voor meer details!"}
     {/if}
-    {if $form.activity_type_id.value.0 == 118}
+    {if $form.activity_type_id.value.0 eq 118}
         {assign var='txtShow' value="Neem contact op met de directeur/bestuurder voor meer informatie"}
     {/if}
     {* get all groups for user *}
@@ -88,6 +88,8 @@
     {/foreach}
 {/if}
 {* end DGW19 / incident 14 01 13 003 1e deel *}
+
+<p>showStuff is {$showStuff}</p>
 
 {if $cdType }
   {include file="CRM/Custom/Form/CustomData.tpl"}
@@ -313,11 +315,11 @@
       <td class="view-value">
       {* If using plain textarea, assign class=huge to make input large enough. *}
        	{* DGW19 / incident 14 010 13 003 laat details alleen zien als showStuff = 1 *}
-            {*{if $showStuff eq 1}*}
+            {if $showStuff eq 1}
                 {if $defaultWysiwygEditor eq 0}{$form.details.html|crmStripAlternatives|crmReplace:class:huge}{else}{$form.details.html|crmStripAlternatives}{/if}
-            {*{else}*}
-                {*{$txtShow}*}
-            {*{/if}*}
+            {else}
+                {$txtShow}
+            {/if}
         {* end DGW19 tweede deel *}
       </td>
     {/if}
