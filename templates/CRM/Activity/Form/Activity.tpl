@@ -89,8 +89,6 @@
 {/if}
 {* end DGW19 / incident 14 01 13 003 1e deel *}
 
-<p>showStuff is {$showStuff}</p>
-
 {if $cdType }
   {include file="CRM/Custom/Form/CustomData.tpl"}
 {else}

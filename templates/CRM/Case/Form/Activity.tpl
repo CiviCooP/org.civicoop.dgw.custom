@@ -29,13 +29,38 @@
  | Date         :   10 Feb 2011 (V3.3.0)                              |
  | Marker       :   DGW10                                             |
  | Description  :   Remove Schedule Follow up                         |
- | Date			:	27 Apr 2011 (v3.3.5)                              |
- | Marker		:	DGW14                                             |
- | Description	:	Limit assignee autocomplete to group 44           |
-+--------------------------------------------------------------------+
-*}
+ | Date		:   27 Apr 2011 (v3.3.5)                              |
+ | Marker	:   DGW14                                             |
+ | Description	:   Limit assignee autocomplete to group 44           |
+ |                                                                    |
+ | Date         :   20 Oct 2011                                       |
+ | Marker       :   DGW19                                             |
+ | Description  :   Gevoelige informatie act. type alleen beschikbaar |
+ |                  voor leden groep 18 (Consulenten Wijk & Buurt)    |
+ +--------------------------------------------------------------------+
 
+ +--------------------------------------------------------------------+
+*}
 {* this template is used for adding/editing activities for a case. *}
+{assign var='showStuff' value=1}
+{if $form.activity_type_id.value.0 eq 110}
+    {assign var='txtShow' value="Gevoelige informatie, neem contact op met Consulent Wijk en Ontwikkeling voor meer details!"}
+{/if}
+{* get all groups for user *}
+{crmAPI var="userGroups" entity="GroupContact" action="get" contact_id=$session->get('userID')}
+{assign var='showStuff' value=0}
+{foreach from=$userGroups.values item=userGroup}
+    {if $form.activity_type_id.value.0 == 110}
+        {assign var='groupWijk' value=18}
+        {if $userGroup.group_id eq 1}
+            {assign var='showStuff' value=1}
+        {/if}
+        {if $userGroup.group_id eq $groupWijk}
+            {assign var='showStuff' value=1}
+        {/if}
+    {/if}
+{/foreach}
+
 {if $cdType }
   {include file="CRM/Custom/Form/CustomData.tpl"}
 {else}
@@ -198,11 +223,21 @@
       <td class="label">{$form.details.label}</td>
       <td class="view-value">
       {* If using plain textarea, assign class=huge to make input large enough. *}
+      {* DGW19 / incident 14 010 13 003 laat details alleen zien als showStuff = 1 *}
+      {if $showStuff eq 1}
         {if $defaultWysiwygEditor eq 0}{$form.details.html|crmAddClass:huge}{else}{$form.details.html}{/if}
+        {else}
+            {$txtShow}
+        {/if}
+        {* end DGW19 tweede deel *}
       </td>
     </tr>
     <tr class="crm-case-activity-form-block-attachment">
-      <td colspan="2">{include file="CRM/Form/attachment.tpl"}</td>
+
+      {*DGW19 only if ShowStuff *}
+      {if $showStuff eq 1}
+          <td colspan="2">{include file="CRM/Form/attachment.tpl"}</td>
+      {/if}
     </tr>
     {if $searchRows} {* We have got case role rows to display for "Send Copy To" feature *}
       <tr class="crm-case-activity-form-block-send_copy">
