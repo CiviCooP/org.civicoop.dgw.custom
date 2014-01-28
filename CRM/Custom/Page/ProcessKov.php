@@ -1,4 +1,16 @@
 <?php
+/**
+ * @copyright Copyright (C) 2013 - CiviCooP (http://www.civicoop.org)
+ * @license Licensed to CiviCRM and De Goede Woning under the Academic Free License version 3.0.
+ *
+ * @author Erik Hommel (erik.hommel@civicoop.org)
+ * @date oct 2013
+ * 
+ * Page to load koopovereenkomsten from csv file
+ * 
+ * @date 27 Jan 2014
+ * @ticket BOS1401984
+ */
 set_time_limit(1200);
 require_once 'CRM/Utils/DgwUtils.php';
 require_once 'CRM/Core/Page.php';
@@ -38,6 +50,7 @@ class CRM_Custom_Page_ProcessKov extends CRM_Core_Page {
             $headerDAO = CRM_Core_DAO::executeQuery("SELECT * FROM ".$this->_kovHeader." ORDER BY kov_nr");
             while ($headerDAO->fetch()) {
                 if (!empty($headerDAO->kov_nr) && $headerDAO->kov_nr != 0) {
+                    $this->_header_data = $headerDAO;
                     $this->processHeader($headerDAO);
                 }
             }
@@ -45,7 +58,7 @@ class CRM_Custom_Page_ProcessKov extends CRM_Core_Page {
             /*
              * remove source file
              */
-            unlink($this->_kovSource);
+            //unlink($this->_kovSource);
             $this->assign('exitMsg', 'Laden koopovereenkomsten succesvol afgerond');
             $session->reset();
             $session->setStatus("Laden koopovereenkomsten is succesvol afgerond.", "Laden koopovereenkomsten afgerond", 'success');
@@ -175,48 +188,6 @@ class CRM_Custom_Page_ProcessKov extends CRM_Core_Page {
      */
     private function processHeader($kovData) {
         $kov_nr = (int) $kovData->kov_nr;
-        if (is_numeric( $kovData->prijs)) {
-            $prijs = (int) $kovData->prijs;
-        } else {
-            $prijs = 0;
-        }
-        if (is_numeric( $kovData->tax_waarde)) {
-            $tax_waarde = (int) $kovData->tax_waarde;
-        } else {
-            $tax_waarde = 0;
-        }
-        if (!empty( $kovData->ov_datum)) {
-            $kovData->ov_datum = CRM_Utils_DgwUtils::correctNlDate($kovData->ov_datum);
-            $ov_datum = date("Y-m-d", strtotime($kovData->ov_datum));
-            if ($ov_datum == "1970-01-01") {
-                $ov_datum = "";
-            }
-        } else {
-            $ov_datum = "";
-        }
-        if (!empty($kovData->tax_datum)) {
-            $kovData->tax_datum = CRM_Utils_DgwUtils::correctNlDate($kovData->tax_datum);
-            $tax_datum = date("Y-m-d", strtotime($kovData->tax_datum));
-            if ($tax_datum == "1970-01-01") {
-                $tax_datum = "";
-            }
-        } else {
-            $tax_datum = "";
-        }
-        if (!empty( $kovData->bouw_datum)) {
-            $kovData->bouw_datum = CRM_Utils_DgwUtils::correctNlDate($kovData->bouw_datum);
-            $bouw_datum = date("Y-m-d", strtotime($kovData->bouw_datum));
-            if ($bouw_datum == "1970-01-01") {
-                $bouw_datum = "";
-            }
-        } else {
-            $bouw_datum = "";
-        }
-        if (trim($kovData->definitief) == "J") {
-            $definitief = 1;
-        } else {
-            $definitief = 0;
-        }
         /*
          * retrieve all individuals for koopovereenkomst and place in array
          */
@@ -266,7 +237,7 @@ class CRM_Custom_Page_ProcessKov extends CRM_Core_Page {
             $i++;
         }
         /*
-         * check if name household is the same, create if different
+         * check if name household is the same, update if different
          */
         if (!$createHouseHold) {
             $apiParams = array(
@@ -277,7 +248,14 @@ class CRM_Custom_Page_ProcessKov extends CRM_Core_Page {
             if (!isset($apiHouseHold['is_error']) || $apiHouseHold['is_error'] == 0) {
                 if (isset($apiHouseHold['household_name'])) {
                     if ($apiHouseHold['household_name'] != $kovData->corr_naam) {
-                        $createHouseHold = true;
+                        /*
+                         * BOS1401984 (remove create new household and update instead
+                         */
+                        $household_name = CRM_Core_DAO::escapeString($kovData->corr_naam);
+                        $update_query = "UPDATE civicrm_contact SET household_name = 
+                            '$household_name', display_name = '$household_name', 
+                            sort_name = '$household_name' WHERE id = $houseHoldId";
+                        CRM_Core_DAO::executeQuery($update_query);
                     }
                 }
             }
@@ -295,13 +273,13 @@ class CRM_Custom_Page_ProcessKov extends CRM_Core_Page {
                     $copyContactId = $kovIndividual['id'];
                 }
             }
-            $houseHoldId = self::createHouseHold($kovData->corr_naam, $copyContactId, $relLabel);
+            $houseHoldId = $this->createHouseHold($kovData->corr_naam, $copyContactId, $relLabel);
         }
         /*
          * update or create koopovereenkomst if there is a household
          */
         if (isset($houseHoldId) && !empty($houseHoldId)) {
-            self::processKoopovereenkomst($kovData, $houseHoldId);
+            $this->processKoopovereenkomst($kovData, $houseHoldId);
             /*
              * create relationship Koopovereenkomst partner between all persons and household
              * but remove existing ones first
@@ -387,13 +365,15 @@ class CRM_Custom_Page_ProcessKov extends CRM_Core_Page {
      * function to create or update koopovereenkomst
      */
     private function processKoopovereenkomst($kovData, $houseHoldId) {
-        $vge_nr = (int) $kovData->vge_nr;
-        $corr_naam = (string) $kovData->corr_naam;
-        $vge_adres = (string) $kovData->vge_adres;
-        $type = self::setKovType( $kovData->type );
-        $notaris = CRM_Utils_DgwUtils::upperCaseSplitTxt($kovData->notaris);
-        $taxateur = CRM_Utils_DgwUtils::upperCaseSplitTxt($kovData->taxateur);
-        $bouwkundige = CRM_Utils_DgwUtils::upperCaseSplitTxt($kovData->bouwkundige);
+        $type = $this->setKovType( $kovData->type );
+        $kovData->notaris = CRM_Utils_DgwUtils::upperCaseSplitTxt($kovData->notaris);
+        $kovData->taxateur = CRM_Utils_DgwUtils::upperCaseSplitTxt($kovData->taxateur);
+        $kovData->bouwkundige = CRM_Utils_DgwUtils::upperCaseSplitTxt($kovData->bouwkundige);
+        if (trim($kovData->definitief) == "J") {
+            $kovData->definitief = 1;
+        } else {
+            $kovData->definitief = 0;
+        }
 
         $labelCustomTable = CRM_Utils_DgwUtils::getDgwConfigValue('tabel koopovereenkomst');
         $apiParams = array(

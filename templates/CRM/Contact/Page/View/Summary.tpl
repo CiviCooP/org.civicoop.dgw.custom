@@ -47,10 +47,6 @@
  | Date         :   6 Nov 2011                                        |
  | Description  :   Aanpassing naar D:/ voor eWorX Active X 	      |
  |                                                                    |
- | Marker       :   MUT001                                            |
- | Date         :   8 juli 2013                                       |
- | Description  :   Knop voor het opzeggen van een huurovereenkomst   |
- |                                                                    |
  +--------------------------------------------------------------------+
 *}
 {* Customization DGW1 VB script to call ActiveX function eWorX *}
@@ -147,10 +143,6 @@ End Function
               </li>
           {/if}
 		  
-          {* MUT001 opzeggen huurovereenkomst *}
-          {include file="CRM/Contact/Page/View/hov_opzeggen.tpl"}
-          {* end MUT001 *}
-
           {* Check for permissions to provide Restore and Delete Permanently buttons for contacts that are in the trash. *}
           {if (call_user_func(array('CRM_Core_Permission','check'), 'access deleted contacts') and $permission neq 'view' and
           $is_deleted)}
