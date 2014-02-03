@@ -53,8 +53,12 @@ function civicrm_api3_future_change_process($params) {
     /*
      * retrieve all addresses with location_type Oud
      */
+    $address_params = array(
+        'location_type_id'  =>  $location_type_id_toekomst,
+        'options'           =>  array('limit' => 9999)
+    );
     try {
-        $addresses = civicrm_api3('Address', 'Get', array('location_type_id' => $location_type_id_toekomst));
+        $addresses = civicrm_api3('Address', 'Get', $address_params);
     } catch(CiviCRM_API3_Exception $e) {
         throw new API_Exception("Problem retrieving addresses with location type Oud, 
             error from API Address Get :".$e->getMessage());
@@ -125,6 +129,7 @@ function _retrieveDateChange($date_address) {
         return $date_change;
     } else {
         $brackets = explode(")", $spaties[1]);
+        
         if (!isset($brackets[0])) {
             return $date_change;
         } else {
