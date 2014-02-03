@@ -62,34 +62,28 @@
     
     {* DGW26 Add client Address to report *}
 	{* retrieve client address with API *}
-	{assign var="clientAddress value=""}
-	{assign var="clientPostcode" value=""}
-	{assign var="clientCity" value=""}
-	{assign var="clientPhone" value=""}
-	{crmAPI var="naw" entity="Contact" action="get" sequential="1" contact_id=$clientID}
-	{if isset($naw.$clientID.street_address) and $naw.$clientID.street_address ne ""}
-		{assign var="clientAddress" value=$naw.$clientID.street_address}
-	{/if}
-	{if isset($naw.$clientID.postal_code) and $naw.$clientID.postal_code ne ""}
-		{assign var="clientPostcode value=$naw.$clientID.postal_code}
-	{/if}
-	{if isset($naw.$clientID.city) and $naw.$clientID.city ne ""}
-		{assign var="clientCity" value=$naw.$clientID.city}
-	{/if}
-	{if isset($naw.$clientID.phone) and $naw.$clientID.phone ne ""}
-		{assign var="clientPhone" value=$naw.$clientID.phone}
-	{/if}	
-	<tr>
-		<th class="reports-header">Straat</th>
-		<th class="reports-header">Plaats</th>
-		<th class="reports-header">Telefoon</th>
-	</tr>	
-	<tr>
-		<td class="crm-case-report-clientName">{$clientAddress}</td>
-		<td class="crm-case-report-clientName">{$clientPostcode}&nbsp;{$clientCity}</td>
-		<td class="crm-case-report-clientName">{$clientPhone}</td>
-	</tr>
-{* end DGW26 *}
+	{crmAPI var="naw" entity="Contact" action="getsingle" sequential="1" contact_id=$clientID}
+        <tr>
+            <th class="reports-header">Straat</th>
+            <th class="reports-header">Plaats</th>
+            <th class="reports-header" colspan="3">Telefoon(s) en email(s)</th>
+        </tr>
+        <tr>
+            <td class="crm-case-report-clientName">{$naw.street_address}</td>
+            <td class="crm-case-report-clientName">{$naw.postal_code}&nbsp;{$naw.city}</td>
+            {crmAPI var="phones" entity="Phone" action="get" sequential="1" contact_id=$clientID}
+            {crmAPI var="emails" entity="Email" action="get" sequential="1" contact_id=$clientID}
+            <td class="crm-case-report-clientName" colspan="3">
+                {foreach from=$phones.values item=clientPhone}
+                    {$clientPhone.phone}<br />
+                {/foreach}
+                {foreach from=$emails.values item=clientEmail}
+                    {$clientEmail.email}<br />
+                {/foreach}
+            </td>
+        </tr>
+        {* end DGW26 *}
+        
 </table>
 <h2>{ts}Case Roles{/ts}</h2>
 <table class ="report-layout">
