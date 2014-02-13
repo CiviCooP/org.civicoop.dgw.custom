@@ -29,7 +29,11 @@
  | Date         :   26 Mar 2012                                       |
  | Marker       :   DGW26                                             |
  | Description  :   Add client Address to report template             |
-+--------------------------------------------------------------------+
+ |                                                                    |
+ | Incident BOSB1401851 (CiviCooP)                                    |
+ | Author       :   Erik Hommel (erik.hommel@civicoop.org)            |
+ | Date         :   12 Feb 2014                                       |
+ +--------------------------------------------------------------------+
 *}
 <html xmlns="http://www.w3.org/1999/xhtml" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
 <head>
@@ -159,6 +163,84 @@
     </table>
 {/if}
 
+
+{* BOS1401851 aangepaste sortering voor De Goede Woning *}
+{crmAPI var='caseActivities' entity='CaseActivity' action='get' q='civicrm/ajax/rest' sequential=1 case_id=$caseId}
+{foreach from=$caseActivities.values item=caseActivity}
+    <table class="report-layout">
+        <tr class="crm-case-report-activity-status">
+            <th scope="row" class="label">{ts}Status{/ts}</th>
+            <td class="bold">{$caseActivity.status|escape}</td>
+        </tr>
+        <tr class="crm-case-report-activity-client">
+            <th scope="row" class="label">{ts}Client{/ts}</th>
+            <td>
+                {assign var='targetFirst' value='1'}
+                {foreach from=$caseActivity.targets item=target}
+                    {if $targetFirst eq '1'}
+                        {assign var='targetFirst' value='0'}
+                    {else}
+                        &comma;&nbsp;
+                    {/if}                    
+                    {$target.target_contact_name|escape}
+                {/foreach}
+            </td>
+        </tr>
+            <tr class="crm-case-report-activity-type">
+                <th scope="row" class="label">{ts}Activity Type{/ts}</th>
+                <td class="bold">{$caseActivity.activity_type|escape}</td>
+            </tr>
+            <tr class="crm-case-report-activity-subject">
+                <th scope="row" class="label">{ts}Subject{/ts}</th>
+                <td>{$caseActivity.subject}</td>
+            </tr>
+            <tr class="crm-case-report-activity-source-name">
+                <th scope="row" class="label">{ts}Created by{/ts}</th>
+                <td>{$caseActivity.source_name|escape}</td>
+            </tr>
+            <tr class="crm-case-report-activity-medium">
+                <th scope="row" class="label">{ts}Medium{/ts}</th>
+                <td>{$caseActivity.medium|escape}</td>
+            </tr>
+            <tr class="crm-case-report-activity-location">
+                <th scope="row" class="label">{ts}Location{/ts}</th>
+                <td>{$caseActivity.location|escape}</td>
+            </tr>
+            <tr class="crm-case-report-activity-activity_date_time">
+                <th scope="row" class="label">{ts}Date{/ts}&sol;{ts}Time{/ts}</th>
+                <td>{$caseActivity.activity_date_time|date_format:"%e %B %Y %R"}</td>
+            </tr>
+            <tr class="crm-case-report-activity-details">
+                <th scope="row" class="label">{ts}Details{/ts}</th>
+                <td>{$caseActivity.details}</td>
+            </tr>
+            <tr class="crm-case-report-activity-priority">
+                <th scope="row" class="label">{ts}Priority{/ts}</th>
+                <td>{$caseActivity.priority}</td>
+            </tr>
+        <tr class="crm-case-report-activity-assignee">
+            <th scope="row" class="label">{ts}Assigned to{/ts}</th>
+            <td>
+                {assign var='assigneeFirst' value='1'}
+                {foreach from=$caseActivity.assignees item=assignee}
+                    {if $assigneeFirst eq '1'}
+                        {assign var='assigneeFirst' value='0'}
+                    {else}
+                        &comma;&nbsp;
+                    {/if}                    
+                    {$assignee.assignee_contact_name|escape}
+                {/foreach}
+            </td>
+        </tr>
+            
+            
+            
+            
+    </table>
+    <br />
+{/foreach}
+
+{* remove original core code
 <h2>{ts}Case Activities{/ts}</h2>
 {foreach from=$activities item=activity key=key}
   <table  class ="report-layout">
@@ -176,7 +258,7 @@
        {/foreach}
   </table>
   <br />
-{/foreach}
+{/foreach}*}
 </div>
 </body>
 </html>
