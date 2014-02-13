@@ -11,8 +11,8 @@ return array (
     'params' => 
     array (
       'version' => 3,
-      'name' => 'Call FutureChange.Process API',
-      'description' => 'Call FutureChange.Process API',
+      'name' => 'Future Address Changes',
+      'description' => 'Process Future Address Changes (DGW specific)',
       'run_frequency' => 'Daily',
       'api_entity' => 'FutureChange',
       'api_action' => 'Process',

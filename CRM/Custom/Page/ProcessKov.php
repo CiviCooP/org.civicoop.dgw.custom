@@ -11,10 +11,9 @@
  * @date 27 Jan 2014
  * @ticket BOS1401984
  */
-set_time_limit(1200);
+
 require_once 'CRM/Utils/DgwUtils.php';
 require_once 'CRM/Core/Page.php';
-
 class CRM_Custom_Page_ProcessKov extends CRM_Core_Page {
 
     protected $_kovPath;
@@ -24,6 +23,7 @@ class CRM_Custom_Page_ProcessKov extends CRM_Core_Page {
     protected $_kovFileName;
 
     function run() {
+        ini_set('max_execution_time', 0);
         if (!isset($session)) {
             $session = CRM_Core_Session::singleton();
         }
@@ -35,7 +35,6 @@ class CRM_Custom_Page_ProcessKov extends CRM_Core_Page {
         $this->_kovFileName = CRM_Utils_DgwUtils::getDgwConfigValue('kov bestandsnaam');
         $this->_kovSource = $this->_kovPath.$this->_kovFileName.date("Ymd").".csv";
         if (!file_exists($this->_kovSource)) {
-            $isError = true;
             $session->setStatus("Laden koopovereenkomsten is afgebroken omdat het bestand {$this->_kovSource} niet bestaat.", "Laden koopovereenkomsten mislukt", 'error');
         } else {
             /*

@@ -11,7 +11,6 @@
  * @date 27 Jan 2014
  * @ticket BOS1401984
  */
-set_time_limit(0);
 require_once 'CRM/Utils/DgwUtils.php';
 require_once 'CRM/Core/Page.php';
 
