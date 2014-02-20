@@ -21,6 +21,14 @@ INSERT INTO `dgw_config` SET label = 'begindatum hov huishouden', value = 'Begin
 INSERT INTO `dgw_config` SET label = 'einddatum hov huishouden', value = 'Einddatum HOV';
 INSERT INTO `dgw_config` SET label = 'naam hov huishouden', value = 'Correspondentienaam First';
 
+INSERT INTO `dgw_config` SET label = 'tabel huurovereenkomst organisatie', value = 'Huurovereenkomst (organisatie)';
+INSERT INTO `dgw_config` SET label = 'hovnummer organisatie', value = 'hov nummer';
+INSERT INTO `dgw_config` SET label = 'vgenummer hov organisatie', value = 'vge nummer';
+INSERT INTO `dgw_config` SET label = 'hov adres organisatie', value = 'vge adres';
+INSERT INTO `dgw_config` SET label = 'begindatum hov organisatie', value = 'begindatum overeenkomst';
+INSERT INTO `dgw_config` SET label = 'einddatum hov organisatie', value = 'einddatum overeenkomst';
+INSERT INTO `dgw_config` SET label = 'naam hov organisatie', value = 'naam op overeenkomst';
+
 INSERT INTO `dgw_config` SET label = 'tabel koopovereenkomst', value = 'Koopovereenkomst';
 INSERT INTO `dgw_config` SET label = 'kovnummer', value = 'KOV nummer First';
 INSERT INTO `dgw_config` SET label = 'vgenummer kov', value = 'VGE nummer KOV';

@@ -15,9 +15,6 @@ class CRM_Custom_Upgrader extends CRM_Custom_Upgrader_Base {
             $this->executeSqlFile( 'sql/dgwcustominstall.sql'  );
         }
     }
-    public function uninstall() {
-        $this->executeSqlFile( 'sql/dgwcustomuninstall.sql' );
-    }
 
   // By convention, functions that look like "function upgrade_NNNN()" are
   // upgrade tasks. They are executed in order (like Drupal's hook_update_N).

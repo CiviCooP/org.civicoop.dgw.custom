@@ -84,7 +84,9 @@
             <tr class="crm-case-caseview-display_name">
               <td class="label-left bold" style="padding: 0px; border: none;">{$client.display_name}</td>
             </tr>
-            {if $client.phone}
+            
+            {* Incident BOS14011291 get phones and emails from api and remove core bit*}
+            {*{if $client.phone}
               <tr class="crm-case-caseview-phone">
                 <td class="label-left description" style="padding: 1px">{$client.phone}</td>
               </tr>
@@ -93,18 +95,34 @@
               <tr class="crm-case-caseview-birth_date">
                 <td class="label-left description" style="padding: 1px">{ts}DOB{/ts}: {$client.birth_date|crmDate}</td>
               </tr>
-            {/if}
+            {/if*}
+            
+
             {* DGW26 add client address *}
-			{if $client.contact_id}
-				{assign var="clientID" value=$client.contact_id}
-				{crmAPI var="naw" entity="Contact" action="get" sequential="1" contact_id=$clientID}
-				{if isset($naw.$clientID.street_address) and $naw.$clientID.street_address ne ""}
-					<tr class="crm-case-caseview-phone">
-						<td class="label-left description" style="padding: 0px">Adres: {$naw.$clientID.street_address}, {$naw.$clientID.postal_code}&nbsp;{$naw.$clientID.city}</td>
-					</tr>	
-				{/if}
-			{/if}
-			{* end DGW26 *}
+            {if $client.contact_id}
+                {assign var="clientID" value=$client.contact_id}
+                {crmAPI var="naw" entity="Contact" action="getsingle" sequential="1" contact_id=$clientID}
+                {if isset($naw.street_address) and $naw.street_address ne ""}
+                    <tr class="crm-case-caseview-phone">
+                        <td class="label-left description" style="padding: 0px">Adres: {$naw.street_address}, {$naw.postal_code}&nbsp;{$naw.city}</td>
+                    </tr>	
+                {/if}
+                {crmAPI var="phones" entity="Phone" action="get" sequential="1" contact_id=$clientID}
+                {foreach from=$phones.values item=clientPhone}
+                    <tr class="crm-case-caseview-phone">
+                        <td class="label-left description" style="padding: 0px">Telefoon: {$clientPhone.phone}</td>
+                    </tr>
+                {/foreach}
+                {crmAPI var="emails" entity="Email" action="get" sequential="1" contact_id=$clientID}
+                {foreach from=$emails.values item=clientEmail}
+                    <tr class="crm-case-caseview-phone">
+                        <td class="label-left description" style="padding: 0px">E-mail: {$clientEmail.email}</td>
+                    </tr>
+                {/foreach}
+            {/if}
+            {* end DGW26 *}
+            {* end BOS14011291 *}
+
           {/foreach}
         </table>
         {if $hasRelatedCases}

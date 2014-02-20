@@ -470,7 +470,7 @@ function custom_civicrm_buildForm( $formName, &$form ) {
 
         global $user;
         $userBeheerder = false;
-        if ( in_array( "klantinformatie admin", $user->roles ) ) {
+        if (in_array( "klantinformatie admin", $user->roles)) {
             $userBeheerder = true;
         }
 
