@@ -79,10 +79,7 @@ INSERT INTO `dgw_config` SET label = 'vjt check', value = 'Check';
 
 INSERT INTO `dgw_config` SET label = 'locatie oud', value = 'Oud';
 INSERT INTO `dgw_config` SET label = 'locatie toekomst', value = 'Toekomst';
-INSERT INTO `dgw_config` SET label = 'kov bestandsnaam', value = 'kov_';
-INSERT INTO `dgw_config` SET label = 'kov pad', value = '/home/kov/';
-INSERT INTO `dgw_config` SET label = 'kov tabel', value = 'kovimport';
-INSERT INTO `dgw_config` SET label = 'kov header', value = 'kovhdr';
+INSERT INTO `dgw_config` SET label = 'kov bestandsnaam', value = '/home/kov/kov_';
 INSERT INTO `dgw_config` SET label = 'kov foutgroep', value = 'Koopovereenkomst Huishouden Fout';
 INSERT INTO `dgw_config` SET label = 'kov nummer veld', value = 'KOV nummer First';
 INSERT INTO `dgw_config` SET label = 'kov vge nummer veld', value = 'VGE nummer KOV';

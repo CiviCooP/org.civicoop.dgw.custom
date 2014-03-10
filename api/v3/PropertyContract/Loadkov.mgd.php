@@ -6,16 +6,16 @@
 return array (
   0 => 
   array (
-    'name' => 'Cron:PropertyContract.Load',
+    'name' => 'Cron:PropertyContract.Loadkov',
     'entity' => 'Job',
     'params' => 
     array (
       'version' => 3,
-      'name' => 'Call PropertyContract.Load API',
-      'description' => 'Call PropertyContract.Load API',
+      'name' => 'Call PropertyContract.Loadkov API',
+      'description' => 'Call PropertyContract.Loadkov API',
       'run_frequency' => 'Daily',
       'api_entity' => 'PropertyContract',
-      'api_action' => 'Load',
+      'api_action' => 'Loadkov',
       'parameters' => '',
     ),
   ),
