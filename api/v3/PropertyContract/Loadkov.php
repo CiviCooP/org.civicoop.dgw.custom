@@ -17,8 +17,7 @@ function civicrm_api3_property_contract_loadkov() {
     /*
      * retrieve file name (incl. path) from dgw_config table
      */
-    $sourceFile = CRM_Utils_DgwUtils::getDgwConfigValue("kov bestandsnaam");
-    $sourceFile .= date("Ymd").".csv";
+    $sourceFile = CRM_Utils_DgwUtils::getDgwConfigValue("kov bestandsnaam")."kov_".date("Ymd").".csv";
     /*
      * check if source file exists
      */
