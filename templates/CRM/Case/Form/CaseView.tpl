@@ -168,15 +168,19 @@
       <span class="crm-button"><div class="icon print-icon"></div><input type="button"  value="{ts}Print Case Report{/ts}" name="case_report_all" onclick="printCaseReport( );"/></span>
       
       {* SPR-MUT add button to First *}
-      {if $caseDetails.case_type eq "Huuropzeggingsdossier"}
-          {assign var=parRefno value=1234}
+      {if $caseDetails.case_type eq "Huuropzeggingsdossier" or $caseDetails.case_type eq "Nieuwehuurdersdossier"}
           {* retrieve hoofdhuurder for huurovereenkomst *}
           {crmAPI var='contactRels' entity='Relationship' action='get' q='civicrm/ajax/rest' contact_id_b=$clientID is_active=1 relationship_type_id=11}
           {if isset($contactRels.values.0.contact_id_a)}
               {* now retrieve persoonsnummer first for contact_id_a *}
               {crmAPI var='persoonFirst' entity='DgwContact' action='getsingle' q='civicrm/ajax/rest' contact_id=$contactRels.values.0.contact_id_a}
               {if isset($persoonFirst.1.Persoonsnummer_First)}
-                <span class="crm-button"><div class="icon inform-icon"></div><input type="button"  value="{ts}HOV in First{/ts}" name="firstHov" onclick="window.location.href = 'http://fhpxyp1.a004.woonsuite.nl:7777/portal/page/portal/NCCW/EFP_WOOND_VGE?p_pro_refno=&p_pro_refno_temp=&p_par_refno={$persoonFirst.1.Persoonsnummer_First}&p_aun_refno=&p_reftype=PRO&p_last_reftype=&p_hovnr=&p_request';"/></span>
+                  {if $caseDetails.case_type eq "Huuropzeggingsdossier"}
+                    <span class="crm-button"><div class="icon inform-icon"></div><input type="button"  value="{ts}HOV in First{/ts}" name="firstHov" onclick="window.location.href = 'http://fhpxyp1.a004.woonsuite.nl:7777/portal/page/portal/NCCW/EFP_WOOND_VGE?p_pro_refno=&p_pro_refno_temp=&p_par_refno={$persoonFirst.1.Persoonsnummer_First}&p_aun_refno=&p_reftype=PRO&p_last_reftype=&p_hovnr=&p_request';"/></span>
+                  {/if}
+                  {if $caseDetails.case_type eq "Nieuwehuurdersdossier"}
+                    <span class="crm-button"><div class="icon inform-icon"></div><input type="button"  value="{ts}HOV in First{/ts}" name="firstHov" onclick="window.location.href = 'http://fhpxyp1.a004.woonsuite.nl:7777/portal/page/portal/NCCW/EFP_WOOND_VGE?p_pro_refno=&p_pro_refno_temp=&p_par_refno={$persoonFirst.1.Persoonsnummer_First}&p_aun_refno=&p_reftype=PAR&p_last_reftype=&p_hovnr=&p_request';"/></span>
+                  {/if}
               {/if}
           {/if}    
       {/if}  
