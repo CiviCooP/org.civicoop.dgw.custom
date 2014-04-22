@@ -108,8 +108,24 @@ function _loadHeaderData($sourceFile) {
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
     CRM_Core_DAO::executeQuery($createHeaderFile);
     
+    $testSeparator = fopen($sourceFile, 'r');
+    /*
+     * first test if semi-colon or comma separated, based on assumption that
+     * it is semi-colon and it should be comma if I only get one record then
+     */
+    if ($testRow = fgetcsv($testSeparator, 0, ';')) {
+      if (!isset($testRow[1])) {
+        $csvSeparator = ",";
+      } else {
+        $csvSeparator = ";";
+      }
+    }
+    fclose($testSeparator);
     $sourceData = fopen($sourceFile, 'r');
-    while ($sourceRow = fgetcsv($sourceData, 0, ";")) {
+    while ($sourceRow = fgetcsv($sourceData, 0, $csvSeparator)) {
+      /*
+       * als er maar 1 veld is gevonden, dan nog een keer proberen me
+       */
         $insImport = "INSERT INTO kovimport SET ";
         $insFields = array();
         if (isset($sourceRow[0]) && !empty($sourceRow[0])) {
