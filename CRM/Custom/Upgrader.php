@@ -5,17 +5,31 @@ ini_set( 'display_errors', '1' );
  * Collection of upgrade steps
  */
 class CRM_Custom_Upgrader extends CRM_Custom_Upgrader_Base {
-    /*
-     *@author Erik Hommel (erik.hommel@civicoop.org)
-     * Check if configuration file exists and install if it 
-     * does not 
-     */
-    public function install() {
-        if (!CRM_Core_DAO::checkTableExists('dgw_config')) {
-            $this->executeSqlFile( 'sql/dgwcustominstall.sql'  );
-        }
+  /*
+   *@author Erik Hommel (erik.hommel@civicoop.org)
+   * Check if configuration file exists and install if it 
+   * does not 
+   */
+  public function install() {
+    if (!CRM_Core_DAO::checkTableExists('dgw_config')) {
+      $this->executeSqlFile('sql/dgwcustominstall.sql');
     }
-
+    $this->executeSqlFile('sql/create_kov_import.sql');
+    $this->executeSqlFile('sql/create_kov_header.sql');
+  }
+  /**
+   * Upgrade 2001: add files kov_import and kov_header if not exists
+   * (BOS1402567)
+   * @author Erik Hommel (CiviCooP) <erik.hommel@civicoop.org>
+   * @date 24 Apr 2014
+   *
+   */
+  public function upgrade_1001() {
+    $this->ctx->log->info('Applying update 1001 (creating tables kov_import and kov_header)');
+    $this->executeSqlFile('sql/create_kov_import.sql');
+    $this->executeSqlFile('sql/create_kov_header.sql');
+    return TRUE;
+  }
   // By convention, functions that look like "function upgrade_NNNN()" are
   // upgrade tasks. They are executed in order (like Drupal's hook_update_N).
 

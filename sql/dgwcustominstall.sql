@@ -1,4 +1,4 @@
-CREATE  TABLE `dgw_config` (
+CREATE  TABLE IF NOT EXISTS `dgw_config` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `label` VARCHAR(128) NULL ,
   `value` VARCHAR(256) NULL ,
