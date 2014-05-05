@@ -23,7 +23,7 @@ function civicrm_api3_property_contract_createkov() {
   /*
    * read and process all headers
    */
-  $headerDAO = CRM_Core_DAO::executeQuery('SELECT * FROM kov_header ORDER BY kov_nr');
+  $headerDAO = CRM_Core_DAO::executeQuery('SELECT * FROM kov_header ORDER BY kov_nr LIMIT 500');
   while ($headerDAO->fetch()) {
     if (!empty($headerDAO->kov_nr) && $headerDAO->kov_nr != 0) {
       _process_header($headerDAO);
