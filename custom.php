@@ -152,6 +152,17 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
      */
     if ( $formName == "CRM_Contact_Form_Contact" || $formName == "CRM_Contact_Form_Inline_Address" ) {
         foreach ( $fields['address'] as $addressKey => $address ) {
+          /*
+           * BOS13072269 not allowed to update location type id 1 or location type contactadres 
+           */
+          $apiConfig = CRM_Utils_ApiConfig::singleton();
+          $defaultValues = $form->getVar('_defaultValues');
+          $preAddress = $defaultValues['address'][$addressKey];
+          if ($address['location_type_id'] == 1 || $address['location_type_id'] == $apiConfig->locationVgeAdresId 
+            || $preAddress['location_type_id'] == 1 || $preAddress['location_type_id'] == $apiConfig->locationVgeAdresId) {
+            $errors['address[' . $addressKey . '][location_type_id]'] = 'Adressen van het type Contact adres of VGE adres kunnen alleen via First aangepast worden!';
+          }
+          // end BOS1307269
             /**
              * if street_address entered and street_name empty, split address before validation
              */
