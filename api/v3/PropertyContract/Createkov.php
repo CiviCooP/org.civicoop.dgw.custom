@@ -23,7 +23,7 @@ function civicrm_api3_property_contract_createkov() {
   /*
    * read and process all headers
    */
-  $headerDAO = CRM_Core_DAO::executeQuery('SELECT * FROM kov_header WHERE kov_nr = 2');
+  $headerDAO = CRM_Core_DAO::executeQuery('SELECT * FROM kov_header ORDER BY kov_nr LIMIT 500');
   while ($headerDAO->fetch()) {
     if (!empty($headerDAO->kov_nr) && $headerDAO->kov_nr != 0) {
       _process_header($headerDAO);
@@ -49,15 +49,15 @@ function civicrm_api3_property_contract_createkov() {
 function _process_header($kovData) {
   $retrievedIndividuals = _retrieve_individuals($kovData->kov_nr);
   if ($retrievedIndividuals['create_household'] == false) {
-    $emptyHouseholdId = _check_empty_household($kovData->corr_naam);
-    if (empty($emptyHouseholdId)) {
       _update_household($retrievedIndividuals['household_id'], $kovData->corr_naam);
-      $householdId = $retrievedIndividuals['household_id'];
+      $householdId = $retrievedIndividuals['household_id']; 
+  } else {
+    $emptyHouseholdId = _check_empty_household($kovData->corr_naam);
+    if (empty($emptyHouseholdId)) {  
+      $householdId = _create_household($kovData->corr_naam);
     } else {
       $householdId = $emptyHouseholdId;
     }
-  } else {
-    $householdId = _create_household($kovData->corr_naam);
   }
   _create_kov($kovData, $householdId);
   if (isset($kovData->start_date)) {
@@ -484,7 +484,10 @@ function _update_contactdetails($huishoudenId) {
 function _check_empty_household($householdName) {
   $contact = new CRM_Contact_BAO_Contact();
   $contact->display_name = $householdName;
-  $contact->find(true);
-  CRM_Core_Error::debug('contact', $contact);
-  exit();
+  $contact->find();
+  if ($contact->fetch()) {
+    return $contact->id;
+  } else {
+    return 0;
+  }
 }
