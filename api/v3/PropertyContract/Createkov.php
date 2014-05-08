@@ -23,7 +23,7 @@ function civicrm_api3_property_contract_createkov() {
   /*
    * read and process all headers
    */
-  $headerDAO = CRM_Core_DAO::executeQuery('SELECT * FROM kov_header WHERE kov_nr = 1');
+  $headerDAO = CRM_Core_DAO::executeQuery('SELECT * FROM kov_header WHERE kov_nr = 2');
   while ($headerDAO->fetch()) {
     if (!empty($headerDAO->kov_nr) && $headerDAO->kov_nr != 0) {
       _process_header($headerDAO);
@@ -49,8 +49,13 @@ function civicrm_api3_property_contract_createkov() {
 function _process_header($kovData) {
   $retrievedIndividuals = _retrieve_individuals($kovData->kov_nr);
   if ($retrievedIndividuals['create_household'] == false) {
-    _update_household($retrievedIndividuals['household_id'], $kovData->corr_naam);
-    $householdId = $retrievedIndividuals['household_id'];
+    $emptyHouseholdId = _check_empty_household($kovData->corr_naam);
+    if (empty($emptyHouseholdId)) {
+      _update_household($retrievedIndividuals['household_id'], $kovData->corr_naam);
+      $householdId = $retrievedIndividuals['household_id'];
+    } else {
+      $householdId = $emptyHouseholdId;
+    }
   } else {
     $householdId = _create_household($kovData->corr_naam);
   }
@@ -466,4 +471,20 @@ function _update_contactdetails($huishoudenId) {
     }
   }
   return;
+}
+/**
+ * Function to check if there is a household with incoming name without any
+ * relations (BOS1402567)
+ * 
+ * @author Erik Hommel (CiviCooP) <erik.hommel@civicoop.org>
+ * @date 8 May 2014
+ * @param string $householdName
+ * @return boolean
+ */
+function _check_empty_household($householdName) {
+  $contact = new CRM_Contact_BAO_Contact();
+  $contact->display_name = $householdName;
+  $contact->find(true);
+  CRM_Core_Error::debug('contact', $contact);
+  exit();
 }
