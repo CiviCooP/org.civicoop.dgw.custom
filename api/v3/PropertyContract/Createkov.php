@@ -120,7 +120,7 @@ function _process_individual($daoInd, &$createHousehold, &$householdId) {
    * if individual not found yet, check if koopovereenkomst partner somewhere
    */
   if ($createHousehold == true) {
-    $checkHoofdhuurder = CRM_Utils_DgwUtils::getHuishoudens($result['id'], 'relatie koopovereenkomst');
+    $checkHoofdhuurder = CRM_Utils_DgwUtils::getHuishoudens($contactId, 'relatie koopovereenkomst');
     if (isset($checkHoofdhuurder['count']) && $checkHoofdhuurder['count'] > 0) {
       $createHousehold = false;
       $householdId = $checkHoofdhuurder[0]['huishouden_id'];
