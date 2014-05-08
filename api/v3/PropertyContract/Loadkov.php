@@ -50,6 +50,11 @@ function civicrm_api3_property_contract_loadkov() {
  * @return boolean
  */
 function _load_source_data($sourceFile) {
+  /*
+   * empty receiving files in advance just in case
+   */
+  CRM_Core_DAO::executeQuery('TRUNCATE TABLE kov_import');
+  CRM_Core_DAO::executeQuery('TRUNCATE TABLE kov_header');
   $csvSeparator = _check_separator($sourceFile);
   
   $sourceData = fopen($sourceFile, 'r');
