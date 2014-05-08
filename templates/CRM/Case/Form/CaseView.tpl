@@ -39,6 +39,10 @@
  | 25 Mar 2014                                                        |
  | Marker SPR-MUT                                                     |
  +--------------------------------------------------------------------+
+ | BOS1404150                                                         |
+ | Erik Hommel (CiviCooP) <erik.hommel@civicoop.org>                  |
+ | 8 May 2014                                                         |
+ +--------------------------------------------------------------------+
 *}
 {* CiviCase -  view case screen*}
 
@@ -124,6 +128,13 @@
                         <td class="label-left description" style="padding: 0px">E-mail: {$clientEmail.email}</td>
                     </tr>
                 {/foreach}
+                {* BOS1404150 show inschrijfnummer Woonkeus *}
+                {crmAPI var='woonkeusID' entity='Contact' action='getvalue' id=$clientID return='custom_262'}
+                {if !empty($woonkeusID)}
+                  <tr class="crm-case-caseview-woonkeus_id">
+                    <td class="label-left description" style="padding: 0px">Woonkeus inschrijfnummer: {$woonkeusID}</td>                  
+                  </tr>
+                {/if}
             {/if}
             {* end DGW26 *}
             {* end BOS14011291 *}
