@@ -378,7 +378,10 @@ function custom_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
         if ( isset( $displayGreetings['is_error'] ) ) {
             if ( $displayGreetings['is_error'] == 0 ) {
                if ( isset( $displayGreetings['greetings'] ) ) {
-                   $greetings = $displayGreetings['greetings'];
+                 /*
+                  * BOS1403421 add escapeString
+                  */
+                   $greetings = CRM_Core_DAO::escapeString($displayGreetings['greetings']);
                }
             }
         }

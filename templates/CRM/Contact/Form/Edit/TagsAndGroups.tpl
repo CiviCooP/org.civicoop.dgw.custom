@@ -54,7 +54,7 @@
               <table id="crm-tagGroupTable">
                 {foreach key=k item=it from=$form.$key}
                   {if $k|is_numeric}
-                    <tr class={cycle values="'odd-row','even-row'" name=$key} id="crm-tagRow{$k}">
+                    <tr id="cvrm-tagRow{$k}" class={cycle values="'odd-row','even-row'" name=$key}>
                       <td>
                         <strong>{$it.html}</strong><br />
                         {if $item.$k.description}
