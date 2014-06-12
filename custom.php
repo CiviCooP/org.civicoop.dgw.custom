@@ -151,6 +151,19 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
      * validation address fields on Contact Edit form
      */
     if ( $formName == "CRM_Contact_Form_Contact" || $formName == "CRM_Contact_Form_Inline_Address" ) {
+        /*
+        * BOS14051011 only allow to update address if there is no location type vge address
+        * check if there is a location type 10 (vge address)
+        */
+        $location_type_id_vge_exists = false;
+        foreach ( $fields['address'] as $addressKey => $address ) {
+          $preAddress = $defaultValues['address'][$addressKey];
+          if($apiConfig->locationVgeAdresId == $address['location_type_id'] or $apiConfig->locationVgeAdresId == $preAddress['location_type_id']){
+            $location_type_id_vge_exists = true;
+          }
+        }
+        // end BOS14051011
+        
         foreach ( $fields['address'] as $addressKey => $address ) {
           /*
            * BOS13072269 not allowed to update location type id 1 or location type contactadres 
@@ -158,11 +171,20 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
           $apiConfig = CRM_Utils_ApiConfig::singleton();
           $defaultValues = $form->getVar('_defaultValues');
           $preAddress = $defaultValues['address'][$addressKey];
-          if ($address['location_type_id'] == 1 || $address['location_type_id'] == $apiConfig->locationVgeAdresId 
+          /*if ($address['location_type_id'] == 1 || $address['location_type_id'] == $apiConfig->locationVgeAdresId 
             || $preAddress['location_type_id'] == 1 || $preAddress['location_type_id'] == $apiConfig->locationVgeAdresId) {
             $errors['address[' . $addressKey . '][location_type_id]'] = 'Adressen van het type Contact adres of VGE adres kunnen alleen via First aangepast worden!';
-          }
+          }*/
           // end BOS1307269
+          
+          /*
+           * BOS14051011 only allow to update address if there is no location type vge address
+           */
+          if($location_type_id_vge_exists){
+            $errors['address[' . $addressKey . '][location_type_id]'] = 'Adressen mogen alleen aangepast worden als er geen vge adres is !';
+          }
+          // end BOS14051011
+          
             /**
              * if street_address entered and street_name empty, split address before validation
              */
