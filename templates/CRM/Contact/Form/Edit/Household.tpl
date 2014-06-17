@@ -50,7 +50,7 @@ cj(function($) {
       // Close msg if it exists
       lastnameMsg && lastnameMsg.close && lastnameMsg.close();
       if (this.value == '') return;
-      cj.getJSON(contactHousehold,{household_name:cj('#household_name').val()},
+      cj.getJSON(contactHousehold,{household_name: '%' + cj('#household_name').val() + '%'},
         function(data){
           if (data.is_error == 1 || data.count == 0) {
             return;
