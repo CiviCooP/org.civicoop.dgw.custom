@@ -45,7 +45,6 @@
  +--------------------------------------------------------------------+
 *}
 {* CiviCase -  view case screen*}
-
 {* here we are showing related cases w/ jquery dialog *}
 <div class="crm-block crm-form-block crm-case-caseview-form-block">
 {if $showRelatedCases}
@@ -1037,6 +1036,7 @@ function addTags() {
         <th class='crm-case-activities-with'>{ts}With{/ts}</th>
         <th class='crm-case-activities-assignee'>{ts}Reporter / Assignee{/ts}</th>
         <th class='crm-case-activities-status'>{ts}Status{/ts}</th>
+        <th class='crm-case-activities-attachments'>{ts}Attachments{/ts}</th>
         <th class='crm-case-activities-status' id="nosort">&nbsp;</th>
         <th class='hiddenElement'>&nbsp;</th>
       </tr></thead>
@@ -1164,6 +1164,7 @@ function buildCaseActivities(filterSearch) {
           {name:'activity_deleted', value: activity_deleted }
         );
       }
+      
       cj.ajax( {
         "dataType": 'json',
         "type": "POST",
