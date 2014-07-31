@@ -168,6 +168,10 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
             $location_type_id_vge_exists = true;
           }
         }
+        
+        echo('$location_type_id_vge_exists: ' . $location_type_id_vge_exists);
+        exit();
+        
         // end BOS14051011
         
         foreach ( $fields['address'] as $addressKey => $address ) {
