@@ -161,7 +161,7 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
           
           echo('<pre>');
           print_r($preAddress);
-          pritn_r($apiConfig);
+          print_r($apiConfig);
           echo('</pre>');
           
           if($apiConfig->locationVgeAdresId == $address['location_type_id'] or $apiConfig->locationVgeAdresId == $preAddress['location_type_id']){
