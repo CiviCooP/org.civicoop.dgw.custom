@@ -158,6 +158,12 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
         $location_type_id_vge_exists = false;
         foreach ( $fields['address'] as $addressKey => $address ) {
           $preAddress = $defaultValues['address'][$addressKey];
+          
+          echo('<pre>');
+          print_r($preAddress);
+          pritn_r($apiConfig);
+          echo('</pre>');
+          
           if($apiConfig->locationVgeAdresId == $address['location_type_id'] or $apiConfig->locationVgeAdresId == $preAddress['location_type_id']){
             $location_type_id_vge_exists = true;
           }
