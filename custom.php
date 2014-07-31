@@ -163,6 +163,8 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
         echo('</pre>');
         
         foreach ( $fields['address'] as $addressKey => $address ) {
+          $apiConfig = CRM_Utils_ApiConfig::singleton();
+          $defaultValues = $form->getVar('_defaultValues');
           $preAddress = $defaultValues['address'][$addressKey];
           
           echo('<pre>');
