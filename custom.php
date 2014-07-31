@@ -156,30 +156,16 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
         * check if there is a location type 10 (vge address)
         */
         $location_type_id_vge_exists = false;
-        echo('$location_type_id_vge_exists: ' . $location_type_id_vge_exists);
-        
-        echo('<pre>');
-        print_r($fields);
-        echo('</pre>');
         
         foreach ( $fields['address'] as $addressKey => $address ) {
           $apiConfig = CRM_Utils_ApiConfig::singleton();
           $defaultValues = $form->getVar('_defaultValues');
           $preAddress = $defaultValues['address'][$addressKey];
           
-          echo('<pre>');
-          print_r($preAddress);
-          print_r($apiConfig);
-          echo('</pre>');
-          
           if($apiConfig->locationVgeAdresId == $address['location_type_id'] or $apiConfig->locationVgeAdresId == $preAddress['location_type_id']){
             $location_type_id_vge_exists = true;
           }
         }
-        
-        echo('$location_type_id_vge_exists: ' . $location_type_id_vge_exists);
-        exit();
-        
         // end BOS14051011
         
         foreach ( $fields['address'] as $addressKey => $address ) {
