@@ -156,6 +156,12 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
         * check if there is a location type 10 (vge address)
         */
         $location_type_id_vge_exists = false;
+        echo('$location_type_id_vge_exists: ' . $location_type_id_vge_exists);
+        
+        echo('<pre>');
+        print_r($fields);
+        echo('</pre>');
+        
         foreach ( $fields['address'] as $addressKey => $address ) {
           $preAddress = $defaultValues['address'][$addressKey];
           
