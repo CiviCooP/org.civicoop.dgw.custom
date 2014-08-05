@@ -151,6 +151,13 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
      * validation address fields on Contact Edit form
      */
     if ( $formName == "CRM_Contact_Form_Contact" || $formName == "CRM_Contact_Form_Inline_Address" ) {
+        $apiConfig = CRM_Utils_ApiConfig::singleton();        
+        
+        echo('<pre>');
+        print_r($apiConfig);
+        print_r($fields['address']);
+        echo('</pre>');
+        
         /*
         * BOS14051011 only allow to update address if there is no location type vge address
         * check if there is a location type 10 (vge address)
@@ -158,9 +165,15 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
         $location_type_id_vge_exists = false;
         
         foreach ( $fields['address'] as $addressKey => $address ) {
-          $apiConfig = CRM_Utils_ApiConfig::singleton();
+          
           $defaultValues = $form->getVar('_defaultValues');
           $preAddress = $defaultValues['address'][$addressKey];
+          
+            echo('<pre>');
+            print_r($defaultValues);
+            print_r($preAddress);
+            print_r($address);
+            echo('</pre>');
           
           if($apiConfig->locationVgeAdresId == $address['location_type_id'] or $apiConfig->locationVgeAdresId == $preAddress['location_type_id']){
             $location_type_id_vge_exists = true;
@@ -172,7 +185,6 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
           /*
            * BOS13072269 not allowed to update location type id 1 or location type contactadres 
            */
-          $apiConfig = CRM_Utils_ApiConfig::singleton();
           $defaultValues = $form->getVar('_defaultValues');
           $preAddress = $defaultValues['address'][$addressKey];
           /*if ($address['location_type_id'] == 1 || $address['location_type_id'] == $apiConfig->locationVgeAdresId 
