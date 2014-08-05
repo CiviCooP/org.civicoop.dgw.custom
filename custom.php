@@ -175,11 +175,16 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
             print_r($address);
             echo('</pre>');
           
+            echo($apiConfig->locationVgeAdresId . ' == ' . $address['location_type_id'] . ' or ' . $apiConfig->locationVgeAdresId . ' == ' . $preAddress['location_type_id']);
+            
           if($apiConfig->locationVgeAdresId == $address['location_type_id'] or $apiConfig->locationVgeAdresId == $preAddress['location_type_id']){
             $location_type_id_vge_exists = true;
           }
         }
         // end BOS14051011
+        
+        echo('$location_type_id_vge_exists: ' . $location_type_id_vge_exists);
+        exit();
         
         foreach ( $fields['address'] as $addressKey => $address ) {
           /*
