@@ -153,38 +153,26 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
     if ( $formName == "CRM_Contact_Form_Contact" || $formName == "CRM_Contact_Form_Inline_Address" ) {
         $apiConfig = CRM_Utils_ApiConfig::singleton();        
         
-        echo('<pre>');
-        print_r($apiConfig);
-        print_r($fields['address']);
-        echo('</pre>');
-        
         /*
         * BOS14051011 only allow to update address if there is no location type vge address
         * check if there is a location type 10 (vge address)
         */
         $location_type_id_vge_exists = false;
         
-        foreach ( $fields['address'] as $addressKey => $address ) {
-          
-          $defaultValues = $form->getVar('_defaultValues');
-          $preAddress = $defaultValues['address'][$addressKey];
-          
-            echo('<pre>');
-            print_r($defaultValues);
-            print_r($preAddress);
-            print_r($address);
-            echo('</pre>');
-          
-            echo($apiConfig->locationVgeAdresId . ' == ' . $address['location_type_id'] . ' or ' . $apiConfig->locationVgeAdresId . ' == ' . $preAddress['location_type_id']);
-            
-          if($apiConfig->locationVgeAdresId == $address['location_type_id'] or $apiConfig->locationVgeAdresId == $preAddress['location_type_id']){
-            $location_type_id_vge_exists = true;
-          }
+        if(!empty($apiConfig->locationVgeAdresId)){
+            foreach ( $fields['address'] as $addressKey => $address ) {
+
+                $defaultValues = $form->getVar('_defaultValues');
+                $preAddress = $defaultValues['address'][$addressKey];
+
+                if(!empty($address['location_type_id']) and !empty($preAddress['location_type_id'])){
+                  if($apiConfig->locationVgeAdresId == $address['location_type_id'] or $apiConfig->locationVgeAdresId == $preAddress['location_type_id']){
+                    $location_type_id_vge_exists = true;
+                  }
+                }
+            }
         }
         // end BOS14051011
-        
-        echo('$location_type_id_vge_exists: ' . $location_type_id_vge_exists);
-        exit();
         
         foreach ( $fields['address'] as $addressKey => $address ) {
           /*
