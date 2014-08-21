@@ -160,7 +160,9 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
           $preAddress = $defaultValues['address'][$addressKey];
           if ($address['location_type_id'] == 1 || $address['location_type_id'] == $apiConfig->locationVgeAdresId 
             || $preAddress['location_type_id'] == 1 || $preAddress['location_type_id'] == $apiConfig->locationVgeAdresId) {
-            $errors['address[' . $addressKey . '][location_type_id]'] = 'Adressen van het type Contact adres of VGE adres kunnen alleen via First aangepast worden!';
+            if (!empty($address['street_name']) || !empty($address['street_address'])) {
+              $errors['address[' . $addressKey . '][location_type_id]'] = 'Adressen van het type Contact adres of VGE adres kunnen alleen via First aangepast worden!';
+            }
           }
           // end BOS1307269
             /**

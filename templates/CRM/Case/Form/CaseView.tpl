@@ -129,12 +129,9 @@
                     </tr>
                 {/foreach}
                 {* BOS1404150 show inschrijfnummer Woonkeus *}
-                {crmAPI var='woonkeusID' entity='Contact' action='getvalue' id=$clientID return='custom_262'}
-                {if !empty($woonkeusID)}
-                  <tr class="crm-case-caseview-woonkeus_id">
-                    <td class="label-left description" style="padding: 0px">Woonkeus inschrijfnummer: {$woonkeusID}</td>                  
-                  </tr>
-                {/if}
+                <tr class="crm-case-caseview-woonkeus_id">
+                  <td class="label-left description" style="padding: 0px">Woonkeus inschrijfnummer: {$form.woonkeusId.value}</td>                  
+                </tr>
             {/if}
             {* end DGW26 *}
             {* end BOS14011291 *}
