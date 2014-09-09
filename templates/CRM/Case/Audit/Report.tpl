@@ -33,6 +33,13 @@
  | Incident BOSB1401851 (CiviCooP)                                    |
  | Author       :   Erik Hommel (erik.hommel@civicoop.org)            |
  | Date         :   12 Feb 2014                                       |
+ |                                                                    |
+ | Incident BOS14071072 (CiviCooP)                                    |
+ | Date         :   09 Sept 2014                                      |
+ | Author       :   Jan-Derek Vos (j.vos@bosqom.nl)                   |
+ | Marker       :   DGW19                                             |
+ | Description  :   Gevoelige informatie act. type alleen beschikbaar |
+ |                  voor leden groep 18 (Consulenten Wijk & Buurt)    |
  +--------------------------------------------------------------------+
 *}
 <html xmlns="http://www.w3.org/1999/xhtml" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
@@ -163,10 +170,34 @@
     </table>
 {/if}
 
-
 {* BOS1401851 aangepaste sortering voor De Goede Woning *}
 {crmAPI var='caseActivities' entity='CaseActivity' action='get' q='civicrm/ajax/rest' sequential=1 case_id=$caseId}
 {foreach from=$caseActivities.values item=caseActivity}
+    
+    {* If using plain textarea, assign class=huge to make input large enough. *}
+    {* DGW19 / incident 14 010 13 003 laat details alleen zien als showStuff = 1 *}
+    {* this template is used for adding/editing activities for a case. *}
+    {assign var='showStuff' value=0}
+    {if $caseActivity.activity_type_id eq 110}
+        {assign var='txtShow' value="Gevoelige informatie, neem contact op met Consulent Wijk en Ontwikkeling voor meer details!"}
+    {/if}
+    {* get all groups for user *}
+    {crmAPI var="userGroups" entity="GroupContact" action="get" contact_id=$session->get('userID')}
+    {foreach from=$userGroups.values item=userGroup}
+        {if $caseActivity.activity_type_id eq 110}
+            {assign var='groupWijk' value=18}
+            {if $userGroup.group_id eq 1}
+                {assign var='showStuff' value=1}
+            {/if}
+            {if $userGroup.group_id eq $groupWijk}
+                {assign var='showStuff' value=1}
+            {/if}
+        {else}
+            {assign var='showStuff' value=1}
+        {/if}
+    {/foreach}
+    
+    
     <table class="report-layout">
         <tr class="crm-case-report-activity-status">
             <th scope="row" class="label">{ts}Status{/ts}</th>
@@ -212,7 +243,17 @@
             </tr>
             <tr class="crm-case-report-activity-details">
                 <th scope="row" class="label">{ts}Details{/ts}</th>
-                <td>{$caseActivity.details}</td>
+                {*<td>{$caseActivity.details}</td>*}
+                <td>
+                    {* If using plain textarea, assign class=huge to make input large enough. *}
+                    {* DGW19 / incident 14 010 13 003 laat details alleen zien als showStuff = 1 *}
+                    {if $showStuff eq 1}
+                        {$caseActivity.details}
+                    {else}
+                        {$txtShow}
+                    {/if}
+                    {* end DGW19 tweede deel *}
+                </td>
             </tr>
             <tr class="crm-case-report-activity-priority">
                 <th scope="row" class="label">{ts}Priority{/ts}</th>
