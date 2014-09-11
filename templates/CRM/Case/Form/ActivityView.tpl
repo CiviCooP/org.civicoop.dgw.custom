@@ -39,6 +39,7 @@
 {crmAPI var="userGroups" entity="GroupContact" action="get" contact_id=$session->get('userID')}
 {assign var='showStuff' value=0}
 {foreach from=$userGroups.values item=userGroup}
+    {assign var='groupWijk' value=18}
     {if $userGroup.group_id eq 1}
         {assign var='showStuff' value=1}
     {/if}

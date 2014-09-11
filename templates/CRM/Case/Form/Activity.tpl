@@ -41,6 +41,8 @@
 
  +--------------------------------------------------------------------+
 *}
+
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 {* this template is used for adding/editing activities for a case. *}
 {assign var='showStuff' value=0}
 {if $form.activity_type_id.value.0 eq 110}
