@@ -88,25 +88,23 @@
         </td>
     {else}
         {* DGW19 tweede deel alleen details laten zien als showStuff=1 en label relevant *}
-
-
-                {if $row.label eq 'Type activiteit'}
-                    {if $row.value eq 'Let op! Gevoelige dossierinformatie'}
-                        {assign var=typeGevoelig value=1}
-                    {else}
-                        {assign var=typeGevoelig value=0}
-                    {/if}
-                {/if}
-                {if $typeGevoelig eq 1}
-                    {if $showStuff eq 1}
-                        <td colspan="2">{if $row.label eq 'Details'}{$row.value|crmStripAlternatives|nl2br}{elseif $row.type eq 'Date'}{$row.value|crmDate}{else}{$row.value}{/if}</td>
-                    {else}
-                        <td colspan="2">{if $row.label eq 'Details'}{$txtShow}{elseif $row.type eq 'Date'}{$row.value|crmDate}{else}{$row.value}{/if}</td>
-                    {/if}
-                {else}
-                    <td colspan="2">{if $row.label eq 'Details'}{$row.value|crmStripAlternatives|nl2br}{elseif $row.type eq 'Date'}{$row.value|crmDate}{else}{$row.value}{/if}</td>
-                {/if}
-		{* end DGW19 tweede deel *}
+        {if $row.label eq 'Type activiteit'}
+            {if $row.value eq 'Let op! Gevoelige dossierinformatie'}
+                {assign var=typeGevoelig value=1}
+            {else}
+                {assign var=typeGevoelig value=0}
+            {/if}
+        {/if}
+        {if $typeGevoelig eq 1}
+            {if $showStuff eq 1}
+                <td colspan="2">{if $row.label eq 'Details'}{$row.value|crmStripAlternatives|nl2br}{elseif $row.type eq 'Date'}{$row.value|crmDate}{else}{$row.value}{/if}</td>
+            {else}
+                <td colspan="2">{if $row.label eq 'Details'}{$txtShow}{elseif $row.type eq 'Date'}{$row.value|crmDate}{else}{$row.value}{/if}</td>
+            {/if}
+        {else}
+            <td colspan="2">{if $row.label eq 'Details'}{$row.value|crmStripAlternatives|nl2br}{elseif $row.type eq 'Date'}{$row.value|crmDate}{else}{$row.value}{/if}</td>
+        {/if}
+        {* end DGW19 tweede deel *}
     {/if}
 </tr>
 {/foreach}
