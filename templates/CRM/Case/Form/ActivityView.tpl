@@ -34,7 +34,6 @@
  +--------------------------------------------------------------------+
 *}
 {* DGW19 - Voor act type 109 details alleen laten zien als user in groep 18 met variabele showWijk *}
-{assign var='showStuff' value=1}
 {assign var='txtShow' value="Gevoelige informatie, neem contact op met Consulent Wijk en Ontwikkeling voor meer details!"}
 {* get all groups for user *}
 {crmAPI var="userGroups" entity="GroupContact" action="get" contact_id=$session->get('userID')}

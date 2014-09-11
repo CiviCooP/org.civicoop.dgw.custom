@@ -51,7 +51,6 @@
 {* DGW19 - Voor act type 109 details alleen laten zien als user in groep 18 met variabele showWijk *}
 {* incident 14 01 13 003 zelfde functionaliteit nodig voor groep Dir/Best (28 in test, 24 in prod environment) *}
 {*                       met variabele userDirBest *}
-{assign var='showStuff' value=1}
 {if $form.activity_type_id.value.0 eq 109 or $form.activity_type_id.value.0 eq 110 or $form.activity_type_id.value.0 == 118}
     {if $form.activity_type_id.value.0 eq 109 or $form.activity_type_id.value.0 eq 110}
         {assign var='txtShow' value="Gevoelige informatie, neem contact op met Consulent Wijk en Ontwikkeling voor meer details!"}
