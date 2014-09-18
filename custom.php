@@ -153,7 +153,7 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
     if ( $formName == "CRM_Contact_Form_Contact" || $formName == "CRM_Contact_Form_Inline_Address" ) {
         foreach ( $fields['address'] as $addressKey => $address ) {
           /*
-           * BOS13072269 not allowed to update location type id 1 or location type contactadres 
+           * BOS1307269 not allowed to update location type id 1 or location type contactadres 
            */
           $apiConfig = CRM_Utils_ApiConfig::singleton();
           $defaultValues = $form->getVar('_defaultValues');

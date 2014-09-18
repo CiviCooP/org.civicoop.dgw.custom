@@ -46,7 +46,7 @@
         {if $editOwnCustomData or ($showEdit and $editCustomData and $groupId)}
         	{* DGW4 EE-atWork - disable edit for Huur/Koopovereenkomst *}
             {* DGW34 - disable for huurovereenkomst (org) *}
-            {if $cd_edit.title ne "Koopovereenkomst" and $cd_edit.title ne "Huurovereenkomst" and $cd_edit.title ne "Huurovereenkomst (org)"}
+            {if $cd_edit.title ne "Koopovereenkomst" and $cd_edit.title ne "Huurovereenkomst (huishouden)" and $cd_edit.title ne "Huurovereenkomst (organisatie)"}
     			<tr>	        
     				<td>
       					<a href="{crmURL p="civicrm/contact/view/cd/edit" q="tableId=`$contactId`&cid=`$contactId`&groupID=`$groupId`&action=update&reset=1"}" class="button" style="margin-left: 6px;"><span><div class="icon edit-icon"></div>{ts 1=$cd_edit.title}Edit %1{/ts}</span></a><br/><br/>
@@ -71,7 +71,7 @@
           <div class="crm-submit-buttons">
           	{* DGW4 EE-atWork - disable delete for Huur/Koopovereenkomst *}
             {* DGW34 - disable for huurovereenkomst (org) *}
-            {if $cd_edit.title ne "Koopovereenkomst" and $cd_edit.title ne "Huurovereenkomst" and $cd_edit.title ne "Huurovereenkomst (org)"}
+            {if $cd_edit.title ne "Koopovereenkomst" and $cd_edit.title ne "Huurovereenkomst (huishouden)" and $cd_edit.title ne "Huurovereenkomst (organisatie)"}
       			<a href="#" onclick="showDelete( {$cvID}, '{$cd_edit.name}_{$index}', {$customGroupId}, {$contactId} ); return false;" class="button delete-button" title="{ts 1=$cd_edit.title}Delete this %1 record{/ts}">
        				<span><div class="icon delete-icon"></div>{ts}Delete{/ts}</span>
             	</a>
