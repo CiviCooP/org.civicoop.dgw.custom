@@ -85,6 +85,8 @@
             {/if}
         {/if}
     {/foreach}
+{else}
+  {assign var='showStuff' value=1}
 {/if}
 {* end DGW19 / incident 14 01 13 003 1e deel *}
 
@@ -305,10 +307,10 @@
     <td class="label">{$form.details.label}</td>
     {if $activityTypeName eq "Print PDF Letter"}
       <td class="view-value">
-      {* If using plain textarea, assign class=huge to make input large enough. *}
-      {if $defaultWysiwygEditor eq 0}{$form.details.html|crmAddClass:huge}{else}{$form.details.html}{/if}
+        {* If using plain textarea, assign class=huge to make input large enough. *}
+        {if $defaultWysiwygEditor eq 0}{$form.details.html|crmAddClass:huge}{else}{$form.details.html}{/if}
       </td>
-      {else}
+    {else}
       <td class="view-value">
       {* If using plain textarea, assign class=huge to make input large enough. *}
        	{* DGW19 / incident 14 010 13 003 laat details alleen zien als showStuff = 1 *}
