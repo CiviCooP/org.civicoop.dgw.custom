@@ -157,7 +157,7 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
         * BOS14051011 only allow to update address if there is no location type vge address
         * check if there is a location type 10 (vge address)
         */
-        $location_type_id_vge_exists = false;
+        /*$location_type_id_vge_exists = false;
         
         if(!empty($apiConfig->locationVgeAdresId)){
             foreach ( $fields['address'] as $addressKey => $address ) {
@@ -171,6 +171,51 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
                   }
                 }
             }
+        }*/
+        // end BOS14051011
+        
+        /*
+         * BOS14051011 only allow to update address if there is no vge address
+         * We check by get all the adresses from a contact_id
+         * To get the contact_id, it is diffrent for CRM_Contact_Form_Contact and diffrent for CRM_Contact_Form_Inline_Address
+         * You whant to get all the address because if one of it can be a vge address
+         * CRM_Contact_Form_Inline_Address only give you one address, so you have to get all the addresses
+        */
+        $location_type_id_vge_exists = false;
+        $formValues = $form->getVar('_values');
+        $contact_id = 0;
+        
+        // get cotnact_id from CRM_Contact_Form_Contact
+        if($formName == "CRM_Contact_Form_Contact"){
+          if(isset($formValues['id']) and !empty($formValues['id'])){
+            $contact_id = $formValues['id'];
+          }
+        }
+        
+        // get contact_id from CRM_Contact_Form_Inline_Address
+        if($formName == "CRM_Contact_Form_Inline_Address"){
+          foreach($formValues['address'] as $key => $address){
+            $contact_id = $address['contact_id'];
+          }
+        }
+         
+        // if empty there is no vge address
+        if(!empty($apiConfig->locationVgeAdresId)){
+          $params = array(
+            'version' => 3,
+            'sequential' => 1,
+            'contact_id' => $contact_id,
+          );
+          $result = civicrm_api('Address', 'get', $params);
+          
+          // it is posiible to get more addresses per contact
+          foreach($result['values'] as $key => $address){
+            // the vge address is location_type_id 10
+            // if there is a address that has location_type_id with 10, there is a vge address
+            if($apiConfig->locationVgeAdresId == $address['location_type_id']){
+              $location_type_id_vge_exists = true;
+            }
+          }
         }
         // end BOS14051011
         
