@@ -151,28 +151,7 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
      * validation address fields on Contact Edit form
      */
     if ( $formName == "CRM_Contact_Form_Contact" || $formName == "CRM_Contact_Form_Inline_Address" ) {
-        $apiConfig = CRM_Utils_ApiConfig::singleton();        
-        
-        /*
-        * BOS14051011 only allow to update address if there is no location type vge address
-        * check if there is a location type 10 (vge address)
-        */
-        /*$location_type_id_vge_exists = false;
-        
-        if(!empty($apiConfig->locationVgeAdresId)){
-            foreach ( $fields['address'] as $addressKey => $address ) {
-
-                $defaultValues = $form->getVar('_defaultValues');
-                $preAddress = $defaultValues['address'][$addressKey];
-
-                if(!empty($address['location_type_id']) and !empty($preAddress['location_type_id'])){
-                  if($apiConfig->locationVgeAdresId == $address['location_type_id'] or $apiConfig->locationVgeAdresId == $preAddress['location_type_id']){
-                    $location_type_id_vge_exists = true;
-                  }
-                }
-            }
-        }*/
-        // end BOS14051011
+        $apiConfig = CRM_Utils_ApiConfig::singleton();    
         
         /*
          * BOS14051011 only allow to update address if there is no vge address
@@ -180,10 +159,11 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
          * To get the contact_id, it is diffrent for CRM_Contact_Form_Contact and diffrent for CRM_Contact_Form_Inline_Address
          * You whant to get all the address because if one of it can be a vge address
          * CRM_Contact_Form_Inline_Address only give you one address, so you have to get all the addresses
-        */
-        $location_type_id_vge_exists = false;
+        */     
         $formValues = $form->getVar('_values');
         $contact_id = 0;
+        
+        $location_type_id_vge_exists = false;
         
         // get cotnact_id from CRM_Contact_Form_Contact
         if($formName == "CRM_Contact_Form_Contact"){
