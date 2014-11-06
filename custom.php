@@ -151,20 +151,27 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
      * validation address fields on Contact Edit form
      */
     if ( $formName == "CRM_Contact_Form_Contact" || $formName == "CRM_Contact_Form_Inline_Address" ) {
-        $apiConfig = CRM_Utils_ApiConfig::singleton();    
-        
         /*
          * BOS14051011 only allow to update address if there is no vge address
          * We check by get all the adresses from a contact_id
          * To get the contact_id, it is diffrent for CRM_Contact_Form_Contact and diffrent for CRM_Contact_Form_Inline_Address
          * You whant to get all the address because if one of it can be a vge address
          * CRM_Contact_Form_Inline_Address only give you one address, so you have to get all the addresses
+         * check if there is a vge address if so check if something is change
+         * if there is something is changed and there is a vge address the rease a error else continue
         */     
+        $apiConfig = CRM_Utils_ApiConfig::singleton();    
+      
         $formValues = $form->getVar('_values');
+        $formSubmitValues = $form->getVar('_submitValues');
         $contact_id = 0;
         
+        // if there is a vge address
         $location_type_id_vge_exists = false;
         
+        // if something has changed
+        $location_is_changed = false;
+          
         // get cotnact_id from CRM_Contact_Form_Contact
         if($formName == "CRM_Contact_Form_Contact"){
           if(isset($formValues['id']) and !empty($formValues['id'])){
@@ -188,6 +195,9 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
           );
           $result = civicrm_api('Address', 'get', $params);
           
+          // get all the fields of addresses
+          $fieldsAddress = array('location_type_id', 'is_primary', 'is_billing', 'street_address', 'supplemental_address_1', 'supplemental_address_2', 'city', 'postal_code', 'country_id');
+          
           // it is posiible to get more addresses per contact
           foreach($result['values'] as $key => $address){
             // the vge address is location_type_id 10
@@ -195,31 +205,46 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
             if($apiConfig->locationVgeAdresId == $address['location_type_id']){
               $location_type_id_vge_exists = true;
             }
-          }
+            
+            // check if something in address has change
+            foreach($formValues['address'] as $formKey => $formAddress){
+
+              if($address['id'] == $formAddress['id']){
+                
+                // get the submitted value instead of the form values
+                $formSubmitAddress = $formSubmitValues['address'][$formKey];
+                
+                foreach($fieldsAddress as $field){
+                  
+                  if('id' != $field and 'contact_id' != $field){
+                    
+                    // check if one exsitst and the other not, then something has changed
+                    if(isset($address[$field]) and !isset($formSubmitAddress[$field]) and !empty($address[$field])){
+                      $location_is_changed = true;
+                    }
+                    
+                    if(!isset($address[$field]) and isset($formSubmitAddress[$field]) and !empty($formSubmitAddress[$field])){
+                      $location_is_changed = true;
+                    }
+                    
+                    // check if value has changes
+                    if(isset($address[$field]) and isset($formSubmitAddress[$field]) and $address[$field] != $formSubmitAddress[$field]){
+                      $location_is_changed = true;
+                    }
+                  }
+                }
+              }
+            }
+          }         
         }
         // end BOS14051011
         
-        foreach ( $fields['address'] as $addressKey => $address ) {
+        foreach ( $fields['address'] as $addressKey => $address ) {          
           /*
-           * BOS1307269 not allowed to update location type id 1 or location type contactadres 
+           * BOS14051011 do not allow update if there is a vge address and if something has changed in one of the address
            */
-          $defaultValues = $form->getVar('_defaultValues');
-          $preAddress = $defaultValues['address'][$addressKey];
-          /*if ($address['location_type_id'] == 1 || $address['location_type_id'] == $apiConfig->locationVgeAdresId 
-            || $preAddress['location_type_id'] == 1 || $preAddress['location_type_id'] == $apiConfig->locationVgeAdresId) {
-            if (!empty($address['street_name']) || !empty($address['street_address'])) {
-              $errors['address[' . $addressKey . '][location_type_id]'] = 'Adressen van het type Contact adres of VGE adres kunnen alleen via First aangepast worden!';
-            }
-          }
-            $errors['address[' . $addressKey . '][location_type_id]'] = 'Adressen van het type Contact adres of VGE adres kunnen alleen via First aangepast worden!';
-          }*/
-          // end BOS1307269
-          
-          /*
-           * BOS14051011 only allow to update address if there is no location type vge address
-           */
-          if($location_type_id_vge_exists){
-            $errors['address[' . $addressKey . '][location_type_id]'] = 'Adressen mogen alleen aangepast worden als er geen vge adres is !';
+          if($location_type_id_vge_exists and $location_is_changed){
+            $errors['address[' . $addressKey . '][location_type_id]'] = ts('Adressen mogen alleen aangepast worden als er geen vge adres is !');
           }
           // end BOS14051011
           
