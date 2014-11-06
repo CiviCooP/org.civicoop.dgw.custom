@@ -152,13 +152,13 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
      */
     if ( $formName == "CRM_Contact_Form_Contact" || $formName == "CRM_Contact_Form_Inline_Address" ) {
         /*
-         * BOS14051011 only allow to update address if there is no vge address
+         * BOS14051011 only allow update contact if there is no vge address or there is a vge address but no change in one of the addresses
          * We check by get all the adresses from a contact_id
          * To get the contact_id, it is diffrent for CRM_Contact_Form_Contact and diffrent for CRM_Contact_Form_Inline_Address
          * You whant to get all the address because if one of it can be a vge address
          * CRM_Contact_Form_Inline_Address only give you one address, so you have to get all the addresses
          * check if there is a vge address if so check if something is change
-         * if there is something is changed and there is a vge address the rease a error else continue
+         * if there is something is changed and there is a vge address, rease a error else continue
         */     
         $apiConfig = CRM_Utils_ApiConfig::singleton();    
       
