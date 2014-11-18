@@ -239,6 +239,21 @@
       {if $showStuff eq 1}
           <td colspan="2">{include file="CRM/Form/attachment.tpl"}</td>
       {/if}
+      {*
+       * BOS1411356
+       * Automatically open case activity div if there is an attachment
+       * Jan-Derek Vos Bosqom
+      *}
+      {if  $currentAttachmentInfo|@count gt 0}
+        {literal}
+        <script type="text/javascript">
+        cj(function() {
+           cj('.crm-case-activity-form-block-attachment .crm-accordion-wrapper').removeClass('collapsed');
+           cj('.crm-case-activity-form-block-attachment .crm-accordion-body').css('display', 'block');
+        });
+        </script>
+        {/literal}
+      {/if} 
     </tr>
     {if $searchRows} {* We have got case role rows to display for "Send Copy To" feature *}
       <tr class="crm-case-activity-form-block-send_copy">
