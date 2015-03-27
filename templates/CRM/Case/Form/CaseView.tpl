@@ -267,15 +267,6 @@
 
   cj(function() {
     cj().crmAccordions();
-    /* BOS1503695 insite - huuropzeggingsdossiers
-     * Close all div by default expect case_activities
-     * Only on the contact case tab
-     */
-    cj('#woningwaardering').addClass('collapsed');
-    cj('#vge').addClass('collapsed');
-    cj('#huur_opzegging').addClass('collapsed');
-    cj('#info_afd_verhuur').addClass('collapsed');
-    
     buildCaseRoles(false);
   });
 
@@ -372,6 +363,26 @@
   }
 </script>
 {/literal}
+
+{* BOS1503695 insite - huuropzeggingsdossiers
+ * Close all div by default expect case_activities
+ * Only on the contact case tab 
+ * And if the case type is Huuropzeggingsdossier
+ *}
+ 
+{if $caseDetails.case_type == 'Huuropzeggingsdossier'}
+  {literal}
+  <script type="text/javascript">
+    cj(function() {
+      cj('#woningwaardering').addClass('collapsed');
+      cj('#vge').addClass('collapsed');
+      cj('#huur_opzegging').addClass('collapsed');
+      cj('#info_afd_verhuur').addClass('collapsed');
+    });
+  </script>
+  {/literal}
+{/if}
+
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
 <div id="dialog">
