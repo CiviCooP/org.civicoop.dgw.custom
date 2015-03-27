@@ -376,7 +376,7 @@
     cj(function() {
       cj('#woningwaardering').addClass('collapsed');
       cj('#vge').addClass('collapsed');
-      cj('#huur_opzegging').addClass('collapsed');
+      /*cj('#huur_opzegging').addClass('collapsed'); later decided that this is not necessary */
       cj('#info_afd_verhuur').addClass('collapsed');
     });
   </script>
