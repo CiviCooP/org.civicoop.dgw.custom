@@ -387,6 +387,37 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
 
     return;
 }
+
+/**
+ * BOS1411139 insite - rapporten mailen
+ * 
+ * The whant a cronjob that runs every other week on thursday.
+ * Because it fails to do so only with a cron job. The cronjob runs now every week on thursday, and this
+ * script checked if it is a even week, and if so it let it run, else it quit the script.
+ * 
+ * @param type $op
+ * @param type $objectName
+ * @param type $id
+ * @param type $params
+ */
+function custom_civicrm_pre( $op, $objectName, $id, &$params ) {  
+  if('create' == $op and 'Mailing' == $objectName){
+    
+    // correct way to get the GET request
+    $job = CRM_Utils_Request::retrieve('job', 'String');
+    $instanceId = CRM_Utils_Request::retrieve('instanceId', 'Int');
+    
+    if('mail_report' == $job and 54 == $instanceId){
+      if(is_int(date('W')/2)){
+        // even week
+      }else {
+        // odd week
+        CRM_Utils_System::civiExit();
+      }
+    }
+  }
+}
+
 /**
  * Implementation of hook_civicrm_post
  *
