@@ -28,13 +28,13 @@ function civicrm_api3_future_change_process($params) {
         return;
     }
     $location_params_thuis = array(
-        'name'      =>  "Thuis",
+        'name'      =>  "Contactadres",
         'return'    =>  'id'
     );
     try {
         $location_type_id_thuis = civicrm_api3('LocationType', 'Getvalue', $location_params_thuis);
     } catch(CiviCRM_API3_Exception $e) {
-        throw new API_Exception("Location type Thuis not found in CiviCRM installation, 
+        throw new API_Exception("Location type Contactadres not found in CiviCRM installation,
             error from API LocationType Getvalue: ".$e->getMessage());
         return;
     }
@@ -62,7 +62,6 @@ function civicrm_api3_future_change_process($params) {
     } catch(CiviCRM_API3_Exception $e) {
         throw new API_Exception("Problem retrieving addresses with location type Oud, 
             error from API Address Get :".$e->getMessage());
-        return;
     }
     $count_addresses = 0;
     /*
