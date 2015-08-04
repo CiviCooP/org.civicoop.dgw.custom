@@ -416,6 +416,19 @@ function custom_civicrm_pre( $op, $objectName, $id, &$params ) {
       }
     }
   }
+  /*
+   * BOS1307645/02 - only allow actual delete of individual or organization with a persoonsnummer First if user is admin
+   */
+  if ($objectName == 'Individual' || $objectName == 'Organization') {
+    if ($op == 'delete') {
+      $persNrFirst = CRM_Utils_DgwUtils::getPersoonsnummerFirst($id);
+      if (!empty($persNrFirst)) {
+        if (!CRM_Core_Permission::check('administer CiviCRM')) {
+          CRM_Core_Error::fatal('Je bent niet geautoriseerd om een contact met een persoonsnummer First te verwijderen');
+        }
+      }
+    }
+  }
 }
 
 /**

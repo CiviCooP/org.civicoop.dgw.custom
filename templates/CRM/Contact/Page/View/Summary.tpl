@@ -45,8 +45,11 @@
  | Description  :   Add button to access payment details First        |
  | Marker       :   DGW20                                             |
  | Date         :   6 Nov 2011                                        |
- | Description  :   Aanpassing naar D:/ voor eWorX Active X 	      |
- |                                                                    |
+ | Description  :   Aanpassing naar D:/ voor eWorX Active X 	        |
+ | Marker       :   BOS1307645/02                                     |
+ | Date         :   4 Aug 2015                                        |
+ | Description  :   Verwijder knop voor persoon/org alleen als geen   |
+ |                  persoonsnummer first                              |
  +--------------------------------------------------------------------+
 *}
 {* Customization DGW1 VB script to call ActiveX function eWorX *}
@@ -67,6 +70,34 @@ End Function
 </script>
 {* end VB script DGW1 *}
 
+
+{* BOS1307645\02 disallow delete if persoonsnummer first is present *}
+{* determine if persoonsnummer first empty or not for individual or organization *}
+{assign var="dgwAllowDelete" value=1}
+{foreach from=$viewCustomData item=cfValues key=custumGroupId}
+  {foreach from=$cfValues item=cfItem key=cfID}
+    {if $contact_type == "Individual"}
+      {if $cfItem.name == "Aanvullende_persoonsgegevens"}
+        {foreach from=$cfItem.fields item=cfElement key=cfItemID}
+          {if $cfElement.field_title == "Persoonsnummer First" and !empty($cfElement.field_value)}
+            {assign var="dgwAllowDelete" value=0}
+          {/if}
+        {/foreach}
+      {/if}
+    {/if}
+    {if $contact_type == "Organization"}
+      {if $cfItem.name == "Gegevens_uit_First"}
+        {foreach from=$cfItem.fields item=cfElement key=cfItemID}
+          {if $cfElement.field_title == "Nr. in First" and !empty($cfElement.field_value)}
+            {assign var="dgwAllowDelete" value=0}
+          {/if}
+        {/foreach}
+      {/if}
+    {/if}
+  {/foreach}
+{/foreach}
+{* end BOS1307645\02 *}
+
 {* Customization DGW3 disable edit mode for household if *}
 {* huurovereenkomst or koopovereenkomst is present *}
 {if $contact_type eq 'Household'}
@@ -82,9 +113,23 @@ End Function
             {/if}
         {/if}
     {/foreach}
+{elseif $contact_type eq 'Organization'}
+  {foreach from=$allTabs key=tabName item=tabValue}
+    {if $tabValue.title eq 'Huurovereenkomst (organisatie)'}
+      {if $tabValue.count gt 0}
+        {* if user admin permission to edit, otherwise view only *}
+        {if (call_user_func(array('CRM_Core_Permission','check'), 'administer CiviCRM') ) }
+          {assign var="permission" value="edit"}
+        {else}
+          {assign var="permission" value="view"}
+        {/if}
+      {/if}
+    {/if}
+  {/foreach}
+{else}
+  {assign var="permission" value="edit"}
 {/if}
 {* end DGW3 *}
-
 
 {* DGW1 check if Persoonsnummer First is present so buttons eWorX and First can be shown *}
 {assign var="buttonsFirst" value=0}
@@ -131,21 +176,23 @@ End Function
           {/if}
 
         {* Include the Actions and Edit buttons if user has 'edit' permission and contact is NOT in trash. *}
-          {if $permission EQ 'edit' and !$isDeleted}
+          {if !$isDeleted}
               <li class="crm-contact-activity crm-summary-block">
                   {include file="CRM/Contact/Page/Inline/Actions.tpl"}
               </li>
+            {if $permission == "edit"}
               <li>
                   {assign var='editParams' value=$urlParams|cat:"&action=update&cid=$contactId"}
                   <a href="{crmURL p='civicrm/contact/add' q=$editParams}" class="edit button" title="{ts}Edit{/ts}">
                   <span><div class="icon edit-icon"></div>{ts}Edit{/ts}</span>
                   </a>
               </li>
+            {/if}
           {/if}
-		  
+
           {* Check for permissions to provide Restore and Delete Permanently buttons for contacts that are in the trash. *}
-          {if (call_user_func(array('CRM_Core_Permission','check'), 'access deleted contacts') and $permission neq 'view' and
-          $is_deleted)}
+          {if call_user_func(array('CRM_Core_Permission','check'), 'access deleted contacts') and $permission neq 'view' and
+          $isDeleted}
               <li class="crm-contact-restore">
                   <a href="{crmURL p='civicrm/contact/view/delete' q="reset=1&cid=$contactId&restore=1"}" class="delete button" title="{ts}Restore{/ts}">
                   <span><div class="icon restore-icon"></div>{ts}Restore from Trash{/ts}</span>
@@ -161,12 +208,16 @@ End Function
               {/if}
 
           {elseif call_user_func(array('CRM_Core_Permission','check'), 'delete contacts') and $permission neq 'view'}
+
+            {* BOS1307645\02 disallow delete if persoonsnummer first is present *}
+            {if $dgwAllowDelete == 1 || call_user_func(array('CRM_Core_Permission', 'check'), 'administer CiviCRM')}
               {assign var='deleteParams' value="&reset=1&delete=1&cid=$contactId"}
               <li class="crm-delete-action crm-contact-delete">
                   <a href="{crmURL p='civicrm/contact/view/delete' q=$deleteParams}" class="delete button" title="{ts}Delete{/ts}">
                   <span><div class="icon delete-icon"></div>{ts}Delete Contact{/ts}</span>
                   </a>
               </li>
+            {/if}
           {/if}
 
           {* DGW1 add button for eWorX / First / Betalingen if buttonsFirst *}
