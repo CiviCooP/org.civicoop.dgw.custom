@@ -419,15 +419,15 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
           }else {
             // check if something has changed
             if($formSubmitValues['first_name'] != $contact['first_name']){
-              $errors['first_name'] = ts('De voorletters mogen alleen aangepast worden als er geen Persoosnummer First is !');
+              $errors['first_name'] = ts('De naam van deze contactpersoon kan niet worden gewijzigd. Past u de naam s.v.p. aan in First.');
               $contact_is_changed = true;
             }
             if($formSubmitValues['middle_name'] != $contact['middle_name']){
-              $errors['middle_name'] = ts('De tussenvoegsel mag alleen aangepast worden als er geen Persoosnummer First is !');
+              $errors['middle_name'] = ts('De naam van deze contactpersoon kan niet worden gewijzigd. Past u de naam s.v.p. aan in First.');
               $contact_is_changed = true;
             }
             if($formSubmitValues['last_name'] != $contact['last_name']){
-              $errors['last_name'] = ts('De achternaam mag alleen aangepast worden als er geen Persoosnummer First is !');
+              $errors['last_name'] = ts('De naam van deze contactpersoon kan niet worden gewijzigd. Past u de naam s.v.p. aan in First.');
               $contact_is_changed = true;
             }
           }
