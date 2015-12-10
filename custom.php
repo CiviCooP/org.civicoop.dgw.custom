@@ -391,44 +391,51 @@ function custom_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$er
      * Do not allow the first_name, middle_name and last_name to 
      * be updated if the contact has a "Persoonsnummer First"
      */
-    if($formName == 'CRM_Contact_Form_Inline_ContactName' or $formName == 'CRM_Contact_Form_Contact'){         
-      $formValues = $form->getVar('_values');
-      $formSubmitValues = $form->getVar('_submitValues');
+    if($formName == 'CRM_Contact_Form_Inline_ContactName' or $formName == 'CRM_Contact_Form_Contact'){
+      $action = $form->getVar('_action');
       
-      // get the contact_id from two differnt forms
-      $contact_id = 0;
-      if(isset($formValues['id']) and !empty($formValues['id'])){
-        $contact_id = $formValues['id'];
-      }
-      
-      if(isset($formSubmitValues['cid']) and !empty($formSubmitValues['cid'])){
-        $contact_id = $formSubmitValues['cid'];
-      }
-      
-      if(empty($contact_id)){
-        $errors['last_name'] = ts('Geen contact id !');
-      }else {
-      
-        // check if the contact has a persoonsnummer first
-        if(CRM_Utils_DgwUtils::getPersoonsnummerFirst($contact_id)){      
-          $contact_is_changed = false;
-          $contact = CRM_Utils_DgwUtils::getContact(['contact_id' => $contact_id], 'getsingle');
-          
-          if(!$contact){
-            $errors['last_name'] = ts('Kan de contact gegevens niet ophalen !');
-          }else {
-            // check if something has changed
-            if($formSubmitValues['first_name'] != $contact['first_name']){
-              $errors['first_name'] = ts('De naam van deze contactpersoon kan niet worden gewijzigd. Past u de naam s.v.p. aan in First.');
-              $contact_is_changed = true;
-            }
-            if($formSubmitValues['middle_name'] != $contact['middle_name']){
-              $errors['middle_name'] = ts('De naam van deze contactpersoon kan niet worden gewijzigd. Past u de naam s.v.p. aan in First.');
-              $contact_is_changed = true;
-            }
-            if($formSubmitValues['last_name'] != $contact['last_name']){
-              $errors['last_name'] = ts('De naam van deze contactpersoon kan niet worden gewijzigd. Past u de naam s.v.p. aan in First.');
-              $contact_is_changed = true;
+      /*
+       * BOSW1512161 insite - nieuwe persoon
+       */
+      if ($action == 0 || $action == 2) { //only for inline and edit
+        $formValues = $form->getVar('_values');
+        $formSubmitValues = $form->getVar('_submitValues');
+
+        // get the contact_id from two differnt forms
+        $contact_id = 0;
+        if(isset($formValues['id']) and !empty($formValues['id'])){
+          $contact_id = $formValues['id'];
+        }
+
+        if(isset($formSubmitValues['cid']) and !empty($formSubmitValues['cid'])){
+          $contact_id = $formSubmitValues['cid'];
+        }
+
+        if(empty($contact_id)){
+          $errors['last_name'] = ts('Geen contact id !');
+        }else {
+
+          // check if the contact has a persoonsnummer first
+          if(CRM_Utils_DgwUtils::getPersoonsnummerFirst($contact_id)){      
+            $contact_is_changed = false;
+            $contact = CRM_Utils_DgwUtils::getContact(['contact_id' => $contact_id], 'getsingle');
+
+            if(!$contact){
+              $errors['last_name'] = ts('Kan de contact gegevens niet ophalen !');
+            }else {
+              // check if something has changed
+              if($formSubmitValues['first_name'] != $contact['first_name']){
+                $errors['first_name'] = ts('De naam van deze contactpersoon kan niet worden gewijzigd. Past u de naam s.v.p. aan in First.');
+                $contact_is_changed = true;
+              }
+              if($formSubmitValues['middle_name'] != $contact['middle_name']){
+                $errors['middle_name'] = ts('De naam van deze contactpersoon kan niet worden gewijzigd. Past u de naam s.v.p. aan in First.');
+                $contact_is_changed = true;
+              }
+              if($formSubmitValues['last_name'] != $contact['last_name']){
+                $errors['last_name'] = ts('De naam van deze contactpersoon kan niet worden gewijzigd. Past u de naam s.v.p. aan in First.');
+                $contact_is_changed = true;
+              }
             }
           }
         }
