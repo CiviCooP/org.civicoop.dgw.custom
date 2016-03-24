@@ -887,6 +887,41 @@ function custom_civicrm_buildForm( $formName, &$form ) {
             }
         }
     }
+    
+    /*
+     * BOSW1603092 insite - telefoon locatie
+     * Disable phone location type and set it always 1
+     */
+    /*
+     * BOSW1603285 insite - telefoon type vastzetten
+     * Disable phone type and set it always 1
+     */
+    if ( $formName == "CRM_Contact_Form_Contact" || $formName == "CRM_Contact_Form_Inline_Phone" ) {      
+      
+        $formElements = & $form->getVar('_elements');
+        $defaults = $form->getVar('_defaultValues');
+        foreach ( $formElements as $keyFormElement => & $formElement ) {
+            /*
+             * BOSW1603092 insite - telefoon locatie
+             * Disable phone location type and set it always 1
+             */
+            if(false !== strpos($formElement->_attributes['name'], 'phone') and false !== strpos($formElement->_attributes['name'], 'location_type_id')){
+                $element = $form->getElement($formElement->_attributes['name']);
+                $element->freeze();
+                $defaults[$formElement->_attributes['name']] = 1;
+            }
+            /*
+             * BOSW1603285 insite - telefoon type vastzetten
+             * Disable phone type and set it always 1
+             */
+            if(false !== strpos($formElement->_attributes['name'], 'phone') and false !== strpos($formElement->_attributes['name'], 'phone_type_id')){
+                $element = $form->getElement($formElement->_attributes['name']);
+                $element->freeze();
+                $defaults[$formElement->_attributes['name']] = 1;
+            }
+        }
+        $form->setDefaults( $defaults );  
+    }
 }
 /**
  * Implementation of hook_civicrm_contactListQuery
