@@ -174,111 +174,127 @@
 {crmAPI var='caseActivities' entity='CaseActivity' action='get' q='civicrm/ajax/rest' sequential=1 case_id=$caseId}
 {foreach from=$caseActivities.values item=caseActivity}
     
-    {* If using plain textarea, assign class=huge to make input large enough. *}
-    {* DGW19 / incident 14 010 13 003 laat details alleen zien als showStuff = 1 *}
-    {* this template is used for adding/editing activities for a case. *}
-    {assign var='showStuff' value=0}
-    {if $caseActivity.activity_type_id eq 110}
-        {assign var='txtShow' value="Gevoelige informatie, neem contact op met Consulent Wijk en Ontwikkeling voor meer details!"}
-    {/if}
-    {* get all groups for user *}
-    {crmAPI var="userGroups" entity="GroupContact" action="get" contact_id=$session->get('userID')}
-    {foreach from=$userGroups.values item=userGroup}
-        {if $caseActivity.activity_type_id eq 110}
-            {assign var='groupWijk' value=18}
-            {if $userGroup.group_id eq 1}
-                {assign var='showStuff' value=1}
-            {/if}
-            {if $userGroup.group_id eq $groupWijk}
-                {assign var='showStuff' value=1}
-            {/if}
-        {else}
-            {assign var='showStuff' value=1}
+    {*/**
+     * BOSW1604045 insite - dossier conversie
+     * Except activity type 'Let op! Gevoelige dossierinformatie'
+     */*}
+    {assign var='hideActivity' value=1}
+    {if isset($hideActivityTypes)}
+      {foreach from=$hideActivityTypes item=hideActivityType}
+        {if $hideActivityType eq $caseActivity.activity_type_id}
+          {assign var='hideActivity' value=0}
         {/if}
-    {/foreach}
+      {/foreach}
+    {/if}
     
-    
-    <table class="report-layout">
-        <tr class="crm-case-report-activity-status">
-            <th scope="row" class="label">{ts}Status{/ts}</th>
-            <td class="bold">{$caseActivity.status|escape}</td>
-        </tr>
-        <tr class="crm-case-report-activity-client">
-            <th scope="row" class="label">{ts}Client{/ts}</th>
-            <td>
-                {assign var='targetFirst' value='1'}
-                {foreach from=$caseActivity.targets item=target}
-                    {if $targetFirst eq '1'}
-                        {assign var='targetFirst' value='0'}
-                    {else}
-                        &comma;&nbsp;
-                    {/if}                    
-                    {$target.target_contact_name|escape}
-                {/foreach}
-            </td>
-        </tr>
-            <tr class="crm-case-report-activity-type">
-                <th scope="row" class="label">{ts}Activity Type{/ts}</th>
-                <td class="bold">{$caseActivity.activity_type|escape}</td>
+    {if $hideActivity eq 1}
+
+        {* If using plain textarea, assign class=huge to make input large enough. *}
+        {* DGW19 / incident 14 010 13 003 laat details alleen zien als showStuff = 1 *}
+        {* this template is used for adding/editing activities for a case. *}
+        {assign var='showStuff' value=0}
+        {if $caseActivity.activity_type_id eq 110}
+            {assign var='txtShow' value="Gevoelige informatie, neem contact op met Consulent Wijk en Ontwikkeling voor meer details!"}
+        {/if}
+        {* get all groups for user *}
+        {crmAPI var="userGroups" entity="GroupContact" action="get" contact_id=$session->get('userID')}
+        {foreach from=$userGroups.values item=userGroup}
+            {if $caseActivity.activity_type_id eq 110}
+                {assign var='groupWijk' value=18}
+                {if $userGroup.group_id eq 1}
+                    {assign var='showStuff' value=1}
+                {/if}
+                {if $userGroup.group_id eq $groupWijk}
+                    {assign var='showStuff' value=1}
+                {/if}
+            {else}
+                {assign var='showStuff' value=1}
+            {/if}
+        {/foreach}
+
+
+        <table class="report-layout">
+            <tr class="crm-case-report-activity-status">
+                <th scope="row" class="label">{ts}Status{/ts}</th>
+                <td class="bold">{$caseActivity.status|escape}</td>
             </tr>
-            <tr class="crm-case-report-activity-subject">
-                <th scope="row" class="label">{ts}Subject{/ts}</th>
-                <td>{$caseActivity.subject}</td>
-            </tr>
-            <tr class="crm-case-report-activity-source-name">
-                <th scope="row" class="label">{ts}Created by{/ts}</th>
-                <td>{$caseActivity.source_name|escape}</td>
-            </tr>
-            <tr class="crm-case-report-activity-medium">
-                <th scope="row" class="label">{ts}Medium{/ts}</th>
-                <td>{$caseActivity.medium|escape}</td>
-            </tr>
-            <tr class="crm-case-report-activity-location">
-                <th scope="row" class="label">{ts}Location{/ts}</th>
-                <td>{$caseActivity.location|escape}</td>
-            </tr>
-            <tr class="crm-case-report-activity-activity_date_time">
-                <th scope="row" class="label">{ts}Date{/ts}&sol;{ts}Time{/ts}</th>
-                <td>{$caseActivity.activity_date_time|date_format:"%e %B %Y %R"}</td>
-            </tr>
-            <tr class="crm-case-report-activity-details">
-                <th scope="row" class="label">{ts}Details{/ts}</th>
-                {*<td>{$caseActivity.details}</td>*}
+            <tr class="crm-case-report-activity-client">
+                <th scope="row" class="label">{ts}Client{/ts}</th>
                 <td>
-                    {* If using plain textarea, assign class=huge to make input large enough. *}
-                    {* DGW19 / incident 14 010 13 003 laat details alleen zien als showStuff = 1 *}
-                    {if $showStuff eq 1}
-                        {$caseActivity.details}
-                    {else}
-                        {$txtShow}
-                    {/if}
-                    {* end DGW19 tweede deel *}
+                    {assign var='targetFirst' value='1'}
+                    {foreach from=$caseActivity.targets item=target}
+                        {if $targetFirst eq '1'}
+                            {assign var='targetFirst' value='0'}
+                        {else}
+                            &comma;&nbsp;
+                        {/if}                    
+                        {$target.target_contact_name|escape}
+                    {/foreach}
                 </td>
             </tr>
-            <tr class="crm-case-report-activity-priority">
-                <th scope="row" class="label">{ts}Priority{/ts}</th>
-                <td>{$caseActivity.priority}</td>
+                <tr class="crm-case-report-activity-type">
+                    <th scope="row" class="label">{ts}Activity Type{/ts}</th>
+                    <td class="bold">{$caseActivity.activity_type|escape}</td>
+                </tr>
+                <tr class="crm-case-report-activity-subject">
+                    <th scope="row" class="label">{ts}Subject{/ts}</th>
+                    <td>{$caseActivity.subject}</td>
+                </tr>
+                <tr class="crm-case-report-activity-source-name">
+                    <th scope="row" class="label">{ts}Created by{/ts}</th>
+                    <td>{$caseActivity.source_name|escape}</td>
+                </tr>
+                <tr class="crm-case-report-activity-medium">
+                    <th scope="row" class="label">{ts}Medium{/ts}</th>
+                    <td>{$caseActivity.medium|escape}</td>
+                </tr>
+                <tr class="crm-case-report-activity-location">
+                    <th scope="row" class="label">{ts}Location{/ts}</th>
+                    <td>{$caseActivity.location|escape}</td>
+                </tr>
+                <tr class="crm-case-report-activity-activity_date_time">
+                    <th scope="row" class="label">{ts}Date{/ts}&sol;{ts}Time{/ts}</th>
+                    <td>{$caseActivity.activity_date_time|date_format:"%e %B %Y %R"}</td>
+                </tr>
+                <tr class="crm-case-report-activity-details">
+                    <th scope="row" class="label">{ts}Details{/ts}</th>
+                    {*<td>{$caseActivity.details}</td>*}
+                    <td>
+                        {* If using plain textarea, assign class=huge to make input large enough. *}
+                        {* DGW19 / incident 14 010 13 003 laat details alleen zien als showStuff = 1 *}
+                        {if $showStuff eq 1}
+                            {$caseActivity.details}
+                        {else}
+                            {$txtShow}
+                        {/if}
+                        {* end DGW19 tweede deel *}
+                    </td>
+                </tr>
+                <tr class="crm-case-report-activity-priority">
+                    <th scope="row" class="label">{ts}Priority{/ts}</th>
+                    <td>{$caseActivity.priority}</td>
+                </tr>
+            <tr class="crm-case-report-activity-assignee">
+                <th scope="row" class="label">{ts}Assigned to{/ts}</th>
+                <td>
+                    {assign var='assigneeFirst' value='1'}
+                    {foreach from=$caseActivity.assignees item=assignee}
+                        {if $assigneeFirst eq '1'}
+                            {assign var='assigneeFirst' value='0'}
+                        {else}
+                            &comma;&nbsp;
+                        {/if}                    
+                        {$assignee.assignee_contact_name|escape}
+                    {/foreach}
+                </td>
             </tr>
-        <tr class="crm-case-report-activity-assignee">
-            <th scope="row" class="label">{ts}Assigned to{/ts}</th>
-            <td>
-                {assign var='assigneeFirst' value='1'}
-                {foreach from=$caseActivity.assignees item=assignee}
-                    {if $assigneeFirst eq '1'}
-                        {assign var='assigneeFirst' value='0'}
-                    {else}
-                        &comma;&nbsp;
-                    {/if}                    
-                    {$assignee.assignee_contact_name|escape}
-                {/foreach}
-            </td>
-        </tr>
-            
-            
-            
-            
-    </table>
-    <br />
+
+
+
+
+        </table>
+        <br />
+    {/if}
 {/foreach}
 
 {* remove original core code
